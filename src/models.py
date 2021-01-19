@@ -45,6 +45,7 @@ class Viaje(db.Model):
     first_day = db.Column(db.Date(), unique=False, nullable=False)
     last_day = db.Column(db.Date(), unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=False)
+    recibiendo_ofertas = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __init__(self,is_active,fecha_publicacion,needs_trip,destination,first_day,last_day,description):
         self.is_active = True
@@ -54,6 +55,7 @@ class Viaje(db.Model):
         self.first_day = first_day
         self.last_day = last_day
         self.description = description
+        self.is_active = is_active
     
     def __repr__(self):
         return '<Viaje %r>' % self.id

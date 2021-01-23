@@ -42,12 +42,11 @@ class Userpro(db.Model):
         return '<Userpro%r>' % self.username
       
      
-    def serialize(self,user_name,email,password,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol):
+    def serialize(self,user_name,email,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol):
         return {
             "id": self.id,
             "user_name":self.user_name,
             "email": self.email,
-            "password": self.password,
             "phone": self.phone,
             "url": self.url,
             "location": self.location,
@@ -93,24 +92,27 @@ class Traveler(db.Model):
 class Offers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_pro =db.Column(db.Integer, db.ForeignKey("userpro.id"), nullable=False)
-    #id_trip = db.Column(db.Integer, db.ForeignKey(""),nullable=False)
+    id_trip = db.Column(db.Integer, db.ForeignKey("trip.id"),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.String(200),nullable=False)
-    counter = db.Column(db.Integer,nullable=False)
 
-    def __init__(self,date,text,counter):
-        self.date: date
+    def __init__(self,text,id_pro,id_trip):
         self.text: text
-        self.counter: counter
+        self.id_pro: id_pro
+        self.id_trip: id_trip
+        
 
     def __repr__(self):
         return '<Offers%r>' % self.username
 
     def serialize(self):
         return {
+            "id":self.id,
             "date":self.date,
             "text":self.text,
-            "counter":self.counter
+            "date":self.date,
+            "id_pro":self.id_pro,
+            "id_trip":self.id_trip
         }
 
 class Trip(db.Model):
@@ -124,6 +126,7 @@ class Trip(db.Model):
     last_day = db.Column(db.Date(), unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=False)
     receiving_offers = db.Column(db.Boolean(), unique=False, nullable=False)
+    offers = relationship("Offers")
 
     def __init__(self,is_active,post_date,needs_trip,destination,first_day,last_day,description):
         self.is_active = True

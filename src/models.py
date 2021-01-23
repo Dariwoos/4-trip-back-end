@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from datetime import datetime, date
+import datetime
 
 #from flask_appbuilder import Model
 
@@ -12,20 +12,20 @@ class Userpro(db.Model):
     email = db.Column(db.String(35), unique=True, nullable=False)
     password = db.Column(db.String(40), unique=False, nullable=False)
     phone= db.Column(db.String(20), unique = True , nullable=False)
-    url = db.Column(db.String(50))
+    url = db.Column(db.String(120))
     location = db.Column(db.String(40) , nullable= False)
     direction = db.Column(db.String(40), nullable=False)
     vat_number = db.Column(db.String(20))
     social_reason = db.Column(db.String(20))
-    avatar= db.Column(db.String(100), nullable=False)
-    photos = db.Column(db.String(200))
+    avatar= db.Column(db.String(120), nullable=False)
+    photos = db.Column(db.String(180))
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30))
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     Ofertas = db.relationship("Offers")
 
-    def __init__(self,username,email,password,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol,is_active):
-        self.user_name = username
+    def __init__(self,user_name,email,password,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol,is_active):
+        self.user_name = user_name
         self.email = email
         self.password = password
         self.phone = phone
@@ -39,7 +39,7 @@ class Userpro(db.Model):
         self.registr_date = registr_date
 
     def __repr__(self):
-        return '<Userpro%r>' % self.username
+        return '<Userpro %r>' % self.user_name
       
      
     def serialize(self,user_name,email,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol):
@@ -67,9 +67,9 @@ class Traveler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True, nullable=False)
     email = db.Column(db.String(40), unique=True, nullable=False)
-    password = db.Column(db.String(15), unique=False, nullable=False)
-    avatar = db.Column(db.String(200), unique=False, nullable=True)
-    rol = db.Column(db.String(10), unique=False, nullable=False)
+    password = db.Column(db.String(15), nullable=False)
+    avatar = db.Column(db.String(180), nullable=True)
+    rol = db.Column(db.String(10), nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     trip = relationship("Trip")
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
@@ -109,9 +109,8 @@ class Offers(db.Model):
         self.id_pro: id_pro
         self.id_trip: id_trip
         
-
     def __repr__(self):
-        return '<Offers%r>' % self.username
+        return '<Offers %r>' % self.id
 
     def serialize(self):
         return {
@@ -146,6 +145,7 @@ class Trip(db.Model):
         self.description = description
         self.is_active = is_active
         self.counter = 0
+
     def __repr__(self):
         return '<Trip %r>' % self.id
 

@@ -8,7 +8,8 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Traveler, Trip
+from models import db, Traveler, Trip, Userpro, Offers
+
 #from models import Person
 
 from werkzeug.utils import secure_filename
@@ -50,6 +51,12 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+@app.route('/user/pro', methods=['GET'])
+def handle_hello():
+    body = request.get_json()
+    
+    return jsonify("todo bien"), 200
+    
 @app.route('/viajeros', methods=['GET'])
 def get_viajeros():
     total_viajeros = Traveler.query.all()

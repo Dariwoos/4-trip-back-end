@@ -72,7 +72,8 @@ class Traveler(db.Model):
     rol = db.Column(db.String(10), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     trip = relationship("Trip")
-    fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+  
 
     def __init__(self,username,email,password,avatar,rol,is_active):
         self.username = username
@@ -86,8 +87,15 @@ class Traveler(db.Model):
     def __repr__(self):
         return '<Traveler %r>' % self.username
 
-
-   
+    def serialize(self): 
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "avatar": self.avatar,
+            "rol": self.rol,   
+            "create_date":self.fecha_registro,
+        }
 
 class Offers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -119,7 +127,7 @@ class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
-    post_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    post_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     needs_trip = db.Column(db.String(60), unique=False, nullable=False)
     destination = db.Column(db.String(200), unique=False, nullable=False)
     first_day = db.Column(db.Date(), unique=False, nullable=False)
@@ -127,17 +135,17 @@ class Trip(db.Model):
     description = db.Column(db.Text, unique=False, nullable=False)
     receiving_offers = db.Column(db.Boolean(), unique=False, nullable=False)
     offers = relationship("Offers")
+    counter = db.Column(db.Integer,nullable=False)
 
-    def __init__(self,is_active,post_date,needs_trip,destination,first_day,last_day,description):
+    def __init__(self,is_active,needs_trip,destination,first_day,last_day,description):
         self.is_active = True
-        self.post_date = post_date
         self.needs_trip = needs_trip
         self.destination = destination
         self.first_day = first_day
         self.last_day = last_day
         self.description = description
         self.is_active = is_active
-    
+        self.counter = 0
     def __repr__(self):
         return '<Trip %r>' % self.id
 
@@ -151,4 +159,6 @@ class Trip(db.Model):
             "first_day": self.first_day,
             "last_day": self.last_day,
             "description": self.description,
+            "counter":self.counter,
+            "receiving_offers":self.receiving_offers
         }

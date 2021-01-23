@@ -33,7 +33,9 @@ def sitemap():
 
 @app.route('/user/pro', methods=['GET'])
 def handle_hello():
-    body = request.get_jeson()
+    body = request.get_json()
+    
+    return jsonify("todo bien"), 200
     
 @app.route('/viajeros', methods=['GET'])
 def get_viajeros():

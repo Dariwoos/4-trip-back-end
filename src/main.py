@@ -40,6 +40,16 @@ def get_viajeros():
 
     return jsonify(response_body), 200
 
+@app.route('/viajes', methods=['GET'])
+def get_viajes():
+    total_viajes = Trip.query.all()
+
+    response_body = {
+        "msg": "estos son todos los viajes"
+    }
+
+    return jsonify(response_body), 200
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))

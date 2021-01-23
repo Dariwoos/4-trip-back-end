@@ -32,7 +32,7 @@ def sitemap():
 
 @app.route('/viajeros', methods=['GET'])
 def get_viajeros():
-    total_viajeros = Viajero.query.all()
+    total_viajeros = Traveler.query.all()
 
     response_body = {
         "msg": "estos son todos los viajeros"

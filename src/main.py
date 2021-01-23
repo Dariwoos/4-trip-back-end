@@ -11,14 +11,34 @@ from admin import setup_admin
 from models import db, Traveler, Trip
 #from models import Person
 
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import ImmutableMultiDict
+
+from jwt_auth import generate_token, decode_token
+
+from functools import wraps
+
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = 'Yu9M@*tU<Z0VavW0!'
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+#decorador
+#def token_required(f):
+    #@wraps(f)
+    #def decorador(*args, **kwargs):
+        #try:
+            #auth = request.headers.get('Authorization')
+            #print(auth)
+        #except:
+            #pass
+        #return f(*args, **kwargs)
+    #return decorador
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -49,6 +69,24 @@ def get_viajes():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/traveler/login', methods=['POST'])
+def login_traveler():
+
+    auth = request.authorization
+    print(auth)
+
+    body = request.get_json()
+    traveler = Traveler.query.filter_by(email=body['email']).first()
+    if(traveler is None):
+        return "el usuario no existe", 401
+    is_validate = compare_pass(body['password'], traveler.password_bcrypt())
+    if(is_validate == False):
+        return "password incorrecto", 401
+
+    token = generate_token(traveler.serialize(), app.config['SECRET_KEY'])
+    print(token)
+    return jsonify({"access_token":token}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

@@ -20,6 +20,7 @@ mysqlclient = "*"
 flask-admin = "*"
 pyjwt = "*"
 jwt = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.8"

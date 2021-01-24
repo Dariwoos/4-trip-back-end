@@ -9,6 +9,7 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, Traveler, Trip, Userpro, Offers
+from encrypted import encrypted_pass, compare_pass
 
 #from models import Person
 
@@ -29,6 +30,10 @@ db.init_app(app)
 CORS(app)
 setup_admin(app)
 
+usuario_fake = {
+    "email": "mariocepedaortega@gmail.com",
+    "password": "123456"
+}
 #decorador
 #def token_required(f):
     #@wraps(f)
@@ -79,12 +84,12 @@ def get_viajes():
 
 @app.route('/traveler/login', methods=['POST'])
 def login_traveler():
-
-    auth = request.authorization
-    print(auth)
-
     body = request.get_json()
-    traveler = Traveler.query.filter_by(email=body['email']).first()
+    #traveler = Traveler.query.filter_by(email=body['email']).first()
+    if(usuario_fake["email"]==body["email"]):
+        traveler = usuario_fake
+    else:
+        traveler = None 
     if(traveler is None):
         return "el usuario no existe", 401
     is_validate = compare_pass(body['password'], traveler.password_bcrypt())

@@ -35,7 +35,7 @@ class Traveler(db.Model):
             "rol": self.rol,
         }
 
-class Trip(db.Model):
+class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
     is_active = db.Column(db.Boolean(), default=True, unique=False, nullable=False)

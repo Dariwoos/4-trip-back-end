@@ -50,6 +50,15 @@ def get_viajes():
 
     return jsonify(response_body), 200
 
+@app.route('/viaje', methods=['POST'])
+def post_trip():
+    body = request.get_json()
+    print(Trip(needs_trip=body['needs_trip'], destination=body['destination'], first_day=body['first_day'], last_day=body['last_day'], description=body['description']))
+    new_trip = Trip(needs_trip=body['needs_trip'], destination=body['destination'], first_day=body['first_day'], last_day=body['last_day'], description=body['description'])
+    print(new_trip.serialize())
+
+    return jsonify(new_trip.serialize()), 200
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))

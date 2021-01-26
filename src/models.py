@@ -38,27 +38,25 @@ class Traveler(db.Model):
 class Trip(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), default=True, unique=False, nullable=False)
     post_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     needs_trip = db.Column(db.String(60), unique=False, nullable=False)
     destination = db.Column(db.String(200), unique=False, nullable=False)
     first_day = db.Column(db.Date(), unique=False, nullable=False)
     last_day = db.Column(db.Date(), unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=False)
-    receiving_offers = db.Column(db.Boolean(), unique=False, nullable=False)
+    receiving_offers = db.Column(db.Boolean(), default=True, unique=False, nullable=False)
 
-    def __init__(self,is_active,post_date,needs_trip,destination,first_day,last_day,description):
-        self.is_active = True
-        self.post_date = post_date
+    def __init__(self,needs_trip,destination,first_day,last_day,description):
         self.needs_trip = needs_trip
         self.destination = destination
         self.first_day = first_day
         self.last_day = last_day
         self.description = description
-        self.is_active = is_active
     
     def __repr__(self):
         return '<Trip %r>' % self.id
+
 
     def serialize (self):
         return {

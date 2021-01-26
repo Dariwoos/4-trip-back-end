@@ -93,13 +93,12 @@ def login_traveler():
         traveler = None 
     if(traveler is None):
         return "el usuario no existe", 401
-    print(type(traveler["password"].decode("utf-8")))
     is_validate = compare_pass(body['password'], traveler["password"].decode("utf-8"))
     if(is_validate == False):
        return "password incorrecto", 401
 
-    token = generate_token(traveler, app.config['SECRET_KEY'])
-    print(token)
+    token = generate_token(traveler["email"], app.config['SECRET_KEY'])
+    #print(token)
     return jsonify({"access_token":token}), 200
 
 # this only runs if `$ python src/main.py` is executed

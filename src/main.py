@@ -98,9 +98,9 @@ def login_traveler():
     if(is_validate == False):
        return "password incorrecto", 401
 
-    #token = generate_token(traveler, app.config['SECRET_KEY'])
-    #print(token)
-    return jsonify({"access_token":123}), 200
+    token = generate_token(traveler, app.config['SECRET_KEY'])
+    print(token)
+    return jsonify({"access_token":token}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

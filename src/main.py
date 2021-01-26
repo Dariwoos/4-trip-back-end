@@ -32,7 +32,7 @@ setup_admin(app)
 
 usuario_fake = {
     "email": "mariocepedaortega@gmail.com",
-    "password": "123456"
+    "password": encrypted_pass("1234567891")
 }
 #decorador
 #def token_required(f):
@@ -92,7 +92,8 @@ def login_traveler():
         traveler = None 
     if(traveler is None):
         return "el usuario no existe", 401
-    is_validate = compare_pass(body['password'], traveler.password_bcrypt())
+    print(encrypted_pass(body['password']),traveler["password"])
+    is_validate = compare_pass(body['password'], traveler["password"])
     if(is_validate == False):
         return "password incorrecto", 401
 

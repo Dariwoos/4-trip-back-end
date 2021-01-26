@@ -32,7 +32,7 @@ setup_admin(app)
 
 usuario_fake = {
     "email": "mariocepedaortega@gmail.com",
-    "password": encrypted_pass("1234567891")
+    "password": encrypted_pass("123456")
 }
 #decorador
 #def token_required(f):
@@ -85,6 +85,7 @@ def get_viajes():
 @app.route('/traveler/login', methods=['POST'])
 def login_traveler():
     body = request.get_json()
+    print(usuario_fake)
     #traveler = Traveler.query.filter_by(email=body['email']).first()
     if(usuario_fake["email"]==body["email"]):
         traveler = usuario_fake
@@ -92,14 +93,14 @@ def login_traveler():
         traveler = None 
     if(traveler is None):
         return "el usuario no existe", 401
-    print(encrypted_pass(body['password']),traveler["password"])
-    is_validate = compare_pass(body['password'], traveler["password"])
+    print(type(traveler["password"].decode("utf-8")))
+    is_validate = compare_pass(body['password'], traveler["password"].decode("utf-8"))
     if(is_validate == False):
-        return "password incorrecto", 401
+       return "password incorrecto", 401
 
-    token = generate_token(traveler.serialize(), app.config['SECRET_KEY'])
-    print(token)
-    return jsonify({"access_token":token}), 200
+    #token = generate_token(traveler, app.config['SECRET_KEY'])
+    #print(token)
+    return jsonify({"access_token":123}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

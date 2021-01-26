@@ -17,32 +17,15 @@ class Userpro(db.Model):
     direction = db.Column(db.String(40), nullable=False)
     vat_number = db.Column(db.String(20))
     social_reason = db.Column(db.String(20))
-    avatar= db.Column(db.String(120), nullable=False)
+    #avatar= db.Column(db.String(120), nullable=False)
     photos = db.Column(db.String(180))
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
-    rol = db.Column(db.String(30))
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    rol = db.Column(db.String(30),default="Profesional")
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
     Ofertas = db.relationship("Offers")
-
-    def __init__(self,user_name,email,password,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol,is_active):
-        self.user_name = user_name
-        self.email = email
-        self.password = password
-        self.phone = phone
-        self.url= url
-        self.location = location
-        self.direction = direction
-        self.vat_number = vat_number
-        self.social_reason =social_reason
-        self.avatar = avatar
-        self.photos = photos
-        self.registr_date = registr_date
-
-    def __repr__(self):
-        return '<Userpro %r>' % self.user_name
       
      
-    def serialize(self,user_name,email,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol):
+    def serialize(self):
         return {
             "id": self.id,
             "user_name":self.user_name,
@@ -53,7 +36,7 @@ class Userpro(db.Model):
             "direction":self.direction,
             "vat_number":self.vat_number,
             "social_reason": self.social_reason,
-            "avatar": self.avatar,
+            #"avatar": self.avatar,
             "photos": self.photos,
             "registr_date": self.registr_date,
             "rol": self.rol

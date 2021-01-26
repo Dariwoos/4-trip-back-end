@@ -31,6 +31,15 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+@app.route('/user/register/pro', methods=['POST'])
+def handle_pro():
+    body = request.get_json()
+    new_user = Userpro(user_name=body['user_name'], email=body['email'],password=body['password'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'])
+    db.session.add(new_user)
+    db.session.commit()
+    print(new_user.serialize())
+    return jsonify(new_user.serialize()), 200
+
 @app.route('/user/pro', methods=['GET'])
 def handle_hello():
     body = request.get_json()

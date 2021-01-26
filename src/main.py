@@ -35,8 +35,8 @@ def sitemap():
 def handle_pro():
     body = request.get_json()
     new_user = Userpro(user_name=body['user_name'], email=body['email'],password=body['password'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'])
-    db.session.add(new_user)
-    db.session.commit()
+    db.session.add(new_user) #sin este linea no se añade a la base de datos
+    db.session.commit() # esta es la hermana de la que esta arriba :) 
     print(new_user.serialize())
     return jsonify(new_user.serialize()), 200
 

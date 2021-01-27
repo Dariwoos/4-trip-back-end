@@ -31,10 +31,13 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user/pro', methods=['GET'])
-def handle_hello():
-    body = request.get_json()
-    
+@app.route('/user/traveler', methods=['POST'])
+def handle_Traveler():
+    body= request.get_json()
+    new_user = Traveler(username=body["username"],email=body["email"],password=body["password"])
+    db.session.add(new_user)
+    db.session.commit()
+    print(new_user.serialize())
     return jsonify("todo bien"), 200
     
 @app.route('/viajeros', methods=['GET'])

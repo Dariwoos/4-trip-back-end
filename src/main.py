@@ -56,6 +56,23 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
+@app.route('/user/register/pro', methods=['POST'])
+def handle_pro():
+    body = request.get_json()
+    new_user = Userpro(user_name=body['user_name'], email=body['email'],password=body['password'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'])
+    db.session.add(new_user) #sin este linea no se añade a la base de datos
+    db.session.commit() # esta es la hermana de la que esta arriba :) 
+    print(new_user.serialize())
+    return jsonify(new_user.serialize()),200
+
+@app.route('/user/pro', methods=['GET'])
+def handle_hello():
+    body = Userpro.query.all()
+    for x in body:
+        print(x.serialize())
+    print(body)
+
 @app.route('/user/traveler', methods=['POST'])
 def handle_Traveler():
     body= request.get_json()
@@ -63,17 +80,17 @@ def handle_Traveler():
     db.session.add(new_user)
     db.session.commit()
     print(new_user.serialize())
+
     return jsonify("todo bien"), 200
     
-@app.route('/viajeros', methods=['GET'])
-def get_viajeros():
-    total_viajeros = Traveler.query.all()
-
-    response_body = {
-        "msg": "estos son todos los viajeros"
-    }
-
-    return jsonify(response_body), 200
+@app.route('/pro/<int:id>',methods=['GET'])
+def get_pro(id):
+    user_pro_by_id = Userpro.query.filter_by(id=id).filter_by(is_active=False).first()
+    print(user_pro_by_id)
+    if user_pro_by_id is not None:
+        return jsonify(user_pro_by_id.serialize()), 200
+    else:
+        return jsonify("usuario no existe"),400
 
 @app.route('/viajes', methods=['GET'])
 def get_viajes():

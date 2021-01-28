@@ -86,6 +86,9 @@ class Traveler(db.Model):
     def __repr__(self):
         return '<Traveler %r>' % self.username
 
+    def password_bcrypt(self):
+        return self.password
+
     def serialize(self): 
         return {
             "id": self.id,

@@ -107,32 +107,32 @@ class Offers(db.Model):
             "id_trip":self.id_trip
         }
 
-class Trip(db.Model):
+class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), default=True, unique=False, nullable=False)
     post_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     needs_trip = db.Column(db.String(60), unique=False, nullable=False)
     destination = db.Column(db.String(200), unique=False, nullable=False)
     first_day = db.Column(db.Date(), unique=False, nullable=False)
     last_day = db.Column(db.Date(), unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=False)
-    receiving_offers = db.Column(db.Boolean(), unique=False, nullable=False)
+    receiving_offers = db.Column(db.Boolean(), unique=False, default=True, nullable=False)
     offers = relationship("Offers")
     counter = db.Column(db.Integer,nullable=False)
 
-    def __init__(self,is_active,needs_trip,destination,first_day,last_day,description):
+    def __init__(self,needs_trip,destination,first_day,last_day,description):
         self.is_active = True
         self.needs_trip = needs_trip
         self.destination = destination
         self.first_day = first_day
         self.last_day = last_day
         self.description = description
-        self.is_active = is_active
         self.counter = 0
 
     def __repr__(self):
         return '<Trip %r>' % self.id
+
 
     def serialize (self):
         return {

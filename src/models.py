@@ -52,23 +52,25 @@ class Traveler(db.Model):
     email = db.Column(db.String(40), unique=True, nullable=False)
     password = db.Column(db.String(15), nullable=False)
     avatar = db.Column(db.String(180), nullable=True)
-    rol = db.Column(db.String(10), nullable=False)
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    rol = db.Column(db.String(10), nullable=False, default= "Traveler")
+    is_active = db.Column(db.Boolean(), default=True ,unique=False, nullable=False)
     trip = relationship("Trip")
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
   
 
-    def __init__(self,username,email,password,avatar,rol,is_active):
+    def __init__(self,username,email,password):
         self.username = username
         self.email = email
         self.password = password
-        self.avatar = avatar
-        self.rol = rol
-        self.is_active = True
+        #self.avatar = avatar
+        #self.is_active = True
 
     
     def __repr__(self):
         return '<Traveler %r>' % self.username
+
+    def password_bcrypt(self):
+        return self.password
 
     def serialize(self): 
         return {
@@ -76,7 +78,7 @@ class Traveler(db.Model):
             "username": self.username,
             "email": self.email,
             "avatar": self.avatar,
-            "rol": self.rol,   
+            #"rol": self.rol,   
             "create_date":self.fecha_registro,
         }
 

@@ -67,7 +67,7 @@ def handle_pro():
     return jsonify(new_user.serialize()),200
 
 @app.route('/user/pro', methods=['GET'])
-def handle_hello():
+def get_all_pros():
     body = Userpro.query.all()
     for x in body:
         print(x.serialize())

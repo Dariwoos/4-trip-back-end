@@ -29,6 +29,7 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+host = "https://3000-a6e518a6-1f81-4a11-bade-6a56b5be8309.ws-eu03.gitpod.io/"
 
 usuario_fake = {
     "email": "mariocepedaortega@gmail.com",
@@ -120,6 +121,14 @@ def login_traveler():
     token = generate_token(traveler["email"], app.config['SECRET_KEY'])
     #print(token)
     return jsonify({"access_token":token}), 200
+
+@app.route("/publicar/viaje",methods=["POST"])
+def creat_post():
+    body = dict(request.form)
+    f = request.files["file"] 
+    print(body)
+    print(f)
+    return  jsonify ("creando post"),201
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

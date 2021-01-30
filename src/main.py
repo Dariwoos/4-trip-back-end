@@ -125,7 +125,9 @@ def login_traveler():
 @app.route("/publicar/viaje",methods=["POST"])
 def creat_post():
     body = dict(request.form)
-    f = request.files["file"] 
+    f = request.files["image"] 
+    filename = secure_filename(f.filename)
+    f.save(os.path.join("./src/img",filename))
     print(body)
     print(f)
     return  jsonify ("creando post"),201

@@ -61,7 +61,7 @@ def sitemap():
 @app.route('/user/register/pro', methods=['POST'])
 def handle_pro():
     body = request.get_json()
-    new_user = Userpro(user_name=body['user_name'], email=body['email'],password=body['password'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'])
+    new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'])
     db.session.add(new_user) #sin este linea no se añade a la base de datos
     db.session.commit() # esta es la hermana de la que esta arriba :) 
     print(new_user.serialize())
@@ -86,8 +86,8 @@ def handle_Traveler():
     
 @app.route('/pro/<int:id>',methods=['GET'])
 def get_pro(id):
-    user_pro_by_id = Userpro.query.filter_by(id=id).filter_by(is_active=False).first()
-    print(user_pro_by_id)
+    user_pro_by_id = Userpro.query.filter_by(id=id).first()
+    print(user_pro_by_id.serialize())
     if user_pro_by_id is not None:
         return jsonify(user_pro_by_id.serialize()), 200
     else:
@@ -123,13 +123,16 @@ def login_traveler():
     return jsonify({"access_token":token}), 200
 
 @app.route("/publicar/viaje",methods=["POST"])
-def creat_post():
+def creat_trip():
     body = dict(request.form)
     f = request.files["image"] 
     filename = secure_filename(f.filename)
     f.save(os.path.join("./src/img",filename))
+    img_url = host + filename
+    new_trip = Trip(img_url , body["needs_trip"], body["destination"],body["first_day"],body["last_day"],body["description"],body["id_traveler"])
     print(body)
     print(f)
+    print(new_trip)
     return  jsonify ("creando post"),201
 
 # this only runs if `$ python src/main.py` is executed

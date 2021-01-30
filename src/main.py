@@ -33,12 +33,24 @@ def sitemap():
 
 @app.route('/user/traveler', methods=['POST'])
 def handle_Traveler():
-    body= request.get_json()
-    new_user = Traveler(username=body["username"],email=body["email"],password=body["password"])
-    db.session.add(new_user)
-    db.session.commit()
-    print(new_user.serialize())
-    return jsonify("todo bien"), 200
+    try:
+        body= request.get_json()
+        if (body["username"] == "" or body["username"] == None ):
+            return jsonify({"msg":"correo no es valido"})
+        if(body["email"] == "" or body["email"] == None ):
+            return jsonify({"msg":"usuario no valido"})
+        if(body["password"]=="" or body["password"]== None):
+            return jsonify({"msg":"contraseña no valida"})
+        new_user = Traveler(username=body["username"],email=body["email"],password=body["password"])
+        db.session.add(new_user)
+        db.session.commit()
+        print(new_user.serialize())
+        return jsonify("todo bien"), 200
+    except OSError as error:
+        return jsonify("Error"), 400
+
+    except KeyError as error:
+        return jsonify("Key error" + str(error)), 400
     
 @app.route('/viajeros', methods=['GET'])
 def get_viajeros():

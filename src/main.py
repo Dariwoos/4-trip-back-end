@@ -129,7 +129,7 @@ def creat_trip():
     filename = secure_filename(f.filename)
     f.save(os.path.join("./src/img",filename))
     img_url = host + filename
-    new_trip = Trip(img_url , body["needs_trip"], body["destination"],body["first_day"],body["last_day"],body["description"],body["id_traveler"])
+    #new_trip = Trip(img_url , body["needs_trip"], body["destination"],body["first_day"],body["last_day"],body["description"],body["id_traveler"])
     print(body)
     print(f)
     print(new_trip)

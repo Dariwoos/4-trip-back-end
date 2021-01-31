@@ -1,4 +1,5 @@
 from flask import request,jsonify
+from models import db, Trip
 
 def trips_route(app,token_required):
 

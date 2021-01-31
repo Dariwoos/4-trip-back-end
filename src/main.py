@@ -18,6 +18,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from router.professional import professional_route
 from router.traveler import traveler_route
 from router.trips import trips_route
+import jwt_auth
 import jwt
 
 from functools import wraps #importacion para generar el decorador
@@ -43,16 +44,14 @@ def token_required(f):
                 return jsonify('no token'),403
             token = auth.split(' ')
             print(token)
-            data = decode_token(token[1], app.config['SECRET_KEY'])
-            print(data,'@@@@@@@@@@@@@@')
-            traveler = Traveler.query.get(data['traveler']['id_traveler'])#Una vez validado el token compruebo que el traveler realmente pertenece a mi bbd
-            print(traveler)
+            data = jwt_auth.decode_token(token[1], app.config['SECRET_KEY'])
+            traveler = Traveler.query.filter_by(email=data["email"]).first()#Una vez validado el token compruebo que el traveler realmente pertenece a mi bbd
             if traveler is None:
                 return jsonify("no authorization"), 401
         except OSError as error:
             print(error)
 
-        except jwt.exception.ExpiredSignatureError as err:
+        except jwt.ExpiredSignatureError as err:
             print(err)
             return jsonify("token expired"), 403
             

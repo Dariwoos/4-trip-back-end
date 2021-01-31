@@ -27,6 +27,6 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
         if(is_validate == False):
             return "password incorrecto", 401
 
-        token = generate_token(traveler.email,traveler.rol,app.config['SECRET_KEY'])
+        token = generate_token(traveler.email,traveler.rol,app.config['SECRET_KEY'])#añado el rol para pasar por el token esta informacion y poder saber si tengo que ir a consultar si el usuario existe a la base de datos de traveler o de professional
         print(token)
         return jsonify({"access_token":token}), 200

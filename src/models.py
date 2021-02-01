@@ -58,11 +58,11 @@ class Traveler(db.Model):
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
   
 
-    def __init__(self,username,email,password):
+    def __init__(self,username,email,password,avatar):
         self.username = username
         self.email = email
         self.password = password
-        #self.avatar = avatar
+        self.avatar = avatar
         #self.is_active = True
 
     
@@ -121,7 +121,8 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
     offers = relationship("Offers")
     counter = db.Column(db.Integer,nullable=False)
 
-    def __init__(self,needs_trip,destination,first_day,last_day,description):
+    def __init__(self,id_traveler,needs_trip,destination,first_day,last_day,description):
+        self.id_traveler = id_traveler
         self.is_active = True
         self.needs_trip = needs_trip
         self.destination = destination

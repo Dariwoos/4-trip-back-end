@@ -15,10 +15,10 @@ def trips_route(app,token_required):
 
     @app.route('/viaje', methods=['POST'])
     @token_required
-    def post_trip():
+    def post_trip(user):
+        print("este es el user",user)
         body = request.get_json()
-        print(Trip(needs_trip=body['needs_trip'], destination=body['destination'], first_day=body['first_day'], last_day=body['last_day'], description=body['description']))
-        new_trip = Trip(needs_trip=body['needs_trip'], destination=body['destination'], first_day=body['first_day'], last_day=body['last_day'], description=body['description'])
+        new_trip = Trip(id_traveler=user['id'], needs_trip=body['needs_trip'], destination=body['destination'], first_day=body['first_day'], last_day=body['last_day'], description=body['description'])
         db.session.add(new_trip)
         db.session.commit()
         print(new_trip.serialize())

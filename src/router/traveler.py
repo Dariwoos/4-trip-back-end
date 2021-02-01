@@ -1,6 +1,4 @@
 from flask import request,jsonify
-from encrypted import encrypted_pass, compare_pass
-from jwt_auth import generate_token, decode_token
 from models import db, Traveler
 
 def traveler_route(app,token_required):#esta función recibe app y token_required que vienen de main
@@ -14,19 +12,3 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
         print(new_user.serialize())
 
         return jsonify("todo bien"), 200
-
-    @app.route('/traveler/login', methods=['POST'])
-    def login_traveler():
-        body = request.get_json()
-        print(body, "este es el body")
-        traveler = Traveler.query.filter_by(email=body['email']).first()
-        print(traveler,"este es el traveler")
-        if(traveler is None):
-            return "el usuario no existe", 401
-        is_validate = compare_pass(body['password'], encrypted_pass(traveler.password).decode("utf-8"))
-        if(is_validate == False):
-            return "password incorrecto", 401
-
-        token = generate_token(traveler.email,traveler.rol,app.config['SECRET_KEY'])#añado el rol para pasar por el token esta informacion y poder saber si tengo que ir a consultar si el usuario existe a la base de datos de traveler o de professional
-        print(token)
-        return jsonify({"access_token":token}), 200

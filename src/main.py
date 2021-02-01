@@ -18,6 +18,7 @@ from werkzeug.datastructures import ImmutableMultiDict
 from router.professional import professional_route
 from router.traveler import traveler_route
 from router.trips import trips_route
+from router.login import login_route
 import jwt_auth
 import jwt
 
@@ -48,6 +49,9 @@ def token_required(f):
             traveler = Traveler.query.filter_by(email=data["email"]).first()#Una vez validado el token compruebo que el traveler realmente pertenece a mi bbd
             if traveler is None:
                 return jsonify("no authorization"), 401
+            
+            return f(data, *args, **kwargs)#meto toda la data para pasar en el token el id del usuario
+
         except OSError as error:
             print(error)
 
@@ -55,7 +59,6 @@ def token_required(f):
             print(err)
             return jsonify("token expired"), 403
             
-        return f(*args, **kwargs)
     return decorador
 
 # Handle/serialize errors like a JSON object
@@ -72,6 +75,7 @@ def sitemap():
 proffesional = professional_route(app,token_required)
 traveler = traveler_route(app,token_required)
 trips = trips_route(app,token_required)
+login = login_route(app)#no necesitamos token. El token solo lo necesitamos cuando las funciones requieren estar logueado
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

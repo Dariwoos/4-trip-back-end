@@ -13,6 +13,7 @@ def trips_route(app,token_required):
 
         return jsonify(response_body), 200
 
+    #TODO: VALIDACIONES DE LOS CAMPOS PARA CREAR EL VIAJE Y USAR EL TRY - EXCEPT
     @app.route('/viaje', methods=['POST'])
     @token_required
     def post_trip(user):

@@ -6,9 +6,15 @@ def trips_route(app,token_required):
     @app.route('/viajes', methods=['GET'])
     def get_trips():
         total_viajes = Trip.query.all()
+        list_trips = []
+        for trip in total_viajes:
+            trip_json = trip.serialize()
+            trip_json["needs_trip"]=trip_json["needs_trip"].split(' ')
+
+            list_trips.append(trip_json)
 
         response_body = {
-            "msg": "estos son todos los viajes"
+            "data": list_trips
         }
 
         return jsonify(response_body), 200

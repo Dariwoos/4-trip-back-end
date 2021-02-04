@@ -38,10 +38,10 @@ def professional_route(app,token_required):
     @app.route('/user/pro', methods=['GET'])
     def all_proffesionals():
         body = Userpro.query.all()
+        list_pro = []
         for user in body:
-           return jsonify(user.serialize()),200
-        print(body)
-        return jsonify(user),200
+            list_pro.append(user.serialize())
+        return jsonify(list_pro),200
 
     @app.route('/pro/<int:id>',methods=['GET'])
     def get_pro(id):

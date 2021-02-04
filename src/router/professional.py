@@ -1,6 +1,7 @@
 from flask import request,jsonify
 from models import db,Userpro
 from encrypted import encrypted_pass
+
 def professional_route(app,token_required):
 
     @app.route('/user/register/pro', methods=['POST'])

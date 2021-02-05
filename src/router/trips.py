@@ -3,14 +3,14 @@ from models import db, Trip
 
 def trips_route(app,token_required):
 
-    @app.route('/viajes', methods=['GET'])
-    def get_trips():
-        total_viajes = Trip.query.all()
+    @app.route('/viajes/<int:page>', methods=['GET'])
+    def get_trips(page):
+        total_viajes = Trip.query.paginate(page,3,error_out=False)
+        print(total_viajes.items)
         list_trips = []
-        for trip in total_viajes:
+        for trip in total_viajes.items:
             trip_json = trip.serialize()
             trip_json["needs_trip"]=trip_json["needs_trip"].split(' ')
-
             list_trips.append(trip_json)
 
         response_body = {

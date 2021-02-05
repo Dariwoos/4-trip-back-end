@@ -13,6 +13,7 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
                 return jsonify({"msg":"correo no es valido"})
             if body["password"] == "":
                 return jsonify({"msg":"contraseña no es valido"})
+            f = request.files["image"]
             new_user = Traveler(username=body["username"],email=body["email"],password=body["password"],avatar=body["avatar"])
             db.session.add(new_user)
             db.session.commit()

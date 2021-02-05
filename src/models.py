@@ -17,8 +17,8 @@ class Userpro(db.Model):
     direction = db.Column(db.String(40), nullable=False)
     vat_number = db.Column(db.String(20))
     social_reason = db.Column(db.String(20))
-    #avatar= db.Column(db.String(120), nullable=False)
-    photos = db.Column(db.String(180))
+    avatar= db.Column(db.String(120), nullable=False)
+    photos = db.Column(db.Text)
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
@@ -36,7 +36,7 @@ class Userpro(db.Model):
             "direction":self.direction,
             "vat_number":self.vat_number,
             "social_reason": self.social_reason,
-            #"avatar": self.avatar,
+            "avatar": self.avatar,
             "photos": self.photos,
             "registr_date": self.registr_date,
             "rol": self.rol

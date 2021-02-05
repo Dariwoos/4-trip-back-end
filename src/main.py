@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for,send_file
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
@@ -70,6 +70,10 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
+
+@app.route("/<filename>",methods=["GET"])
+def photo_rout(filename):
+    return send_file("./img/"+filename)
 
 #llamo a las funciones creadas en la carpeta route y las paso los parámetros app y token_required
 proffesional = professional_route(app,token_required)

@@ -1,28 +1,38 @@
+import os
+from os.path import join
 from flask import request,jsonify
 from models import db,Userpro
 from encrypted import encrypted_pass
+from werkzeug.utils import secure_filename
+from werkzeug.datastructures import ImmutableMultiDict
+
+host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
 
 def professional_route(app,token_required):
 
     @app.route('/user/register/pro', methods=['POST'])
     def new_professional():
         try:
-            body = request.get_json()
-            if (body["email"] == ""  ):
-                return jsonify({"msg":"correo no es valido"})
-            if(body["user_name"] == "" ):
-                return jsonify({"msg":"usuario no es valido"})
+            body = dict(request.form)
+            print(body)
+            if(body["email"] == ""):
+                return jsonify({"msg":"correo no es valido"}),400
+            if(body["user_name"] == ""):
+                return jsonify({"msg":"usuario no es valido"}),400
             if(body["password"] == ""):
-                return jsonify({"msg": "escribe una contraseña"})
-            if(body["phone"] == "" ):
+                return jsonify({"msg": "escribe una contraseña"}),400
+            if(body["phone"] == ""):
                 return jsonify({"msg":"numero no es valido"}),400
-            if(body["location"]== "" ):
+            if(body["location"]== ""):
                 return jsonify({"msg":"localidad no es alida"}),400
-            if(body["direction"] == "" ):
+            if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),400
             encrypt_pass = encrypted_pass(body["password"]) 
-            
-            new_user = Userpro(user_name=body['user_name'],password=body["password"], email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'])
+            f = request.files["avatar"]
+            filename= secure_filename(f.filename)
+            f.save(os.path.join("./src/img",filename))
+            img_url = host+filename
+            new_user = Userpro(user_name=body['user_name'],password=body["password"], email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
             db.session.add(new_user) #sin este linea no se añade a la base de datos
             db.session.commit() # esta es la hermana de la que esta arriba :) 
             print(new_user.serialize())

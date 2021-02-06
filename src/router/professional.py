@@ -54,20 +54,22 @@ def professional_route(app,token_required):
             list_pro.append(user.serialize())
         return jsonify(list_pro),200
 
-    @app.route('/pro/<int:id>',methods=['GET'])
-    def get_pro(id):
+    @app.route('/pro',methods=['GET'])
+    @token_required
+    def get_pro(user):
         body = request.get_json()
-        user_pro = Userpro.query.filter_by(id=id).first()
+        user_pro = Userpro.query.filter_by(id=user["id"]).first()
         print(user_pro)
         if user_pro is not None:
             return jsonify(user_pro.serialize()),200 
         else:
             return jsonify("usuario no existe"),400
 
-    @app.route("/pro/<int:id>",methods=["PUT"])
-    def edit_account_pro(id):
+    @app.route("/pro",methods=["PUT"])
+    @token_required
+    def edit_account_pro(user):
         body = request.get_json() #aqui es el body que quiero cambiar   
-        user_pro = Userpro.query.filter_by(id=id).first() #es donde estan los dato antiguos
+        user_pro = Userpro.query.filter_by(id=user["user"]).first() #es donde estan los dato antiguos
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar
                 print('key',key)

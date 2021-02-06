@@ -72,8 +72,9 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route("/<filename>",methods=["GET"])
-def photo_rout(filename):
+def photo_rout_pro(filename):
     return send_file("./img/"+filename)
+
 
 #llamo a las funciones creadas en la carpeta route y las paso los parámetros app y token_required
 proffesional = professional_route(app,token_required)

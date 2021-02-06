@@ -5,7 +5,7 @@ def trips_route(app,token_required):
 
     @app.route('/viajes/<int:page>', methods=['GET'])
     def get_trips(page):
-        total_viajes = Trip.query.paginate(page,3,error_out=False)
+        total_viajes = Trip.query.order_by(Trip.post_date.desc()).paginate(page,3,error_out=False)
         print(total_viajes.items)
         list_trips = []
         for trip in total_viajes.items:

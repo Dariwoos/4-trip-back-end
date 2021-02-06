@@ -18,31 +18,14 @@ class Userpro(db.Model):
     vat_number = db.Column(db.String(20))
     social_reason = db.Column(db.String(20))
     avatar= db.Column(db.String(120), nullable=False)
-    photos = db.Column(db.String(180))
+    photos = db.Column(db.Text)
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
-    rol = db.Column(db.String(30))
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    rol = db.Column(db.String(30),default="Profesional")
+    is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
     Ofertas = db.relationship("Offers")
-
-    def __init__(self,user_name,email,password,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol,is_active):
-        self.user_name = user_name
-        self.email = email
-        self.password = password
-        self.phone = phone
-        self.url= url
-        self.location = location
-        self.direction = direction
-        self.vat_number = vat_number
-        self.social_reason =social_reason
-        self.avatar = avatar
-        self.photos = photos
-        self.registr_date = registr_date
-
-    def __repr__(self):
-        return '<Userpro %r>' % self.user_name
       
      
-    def serialize(self,user_name,email,phone,url,location,direction,vat_number,social_reason,avatar,photos,registr_date,rol):
+    def serialize(self):
         return {
             "id": self.id,
             "user_name":self.user_name,
@@ -75,16 +58,19 @@ class Traveler(db.Model):
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
   
 
-    def __init__(self,username,email,password):
+    def __init__(self,username,email,password,avatar):
         self.username = username
         self.email = email
         self.password = password
-        #self.avatar = avatar
+        self.avatar = avatar
         #self.is_active = True
 
     
     def __repr__(self):
         return '<Traveler %r>' % self.username
+
+    def password_bcrypt(self):
+        return self.password
 
     def serialize(self): 
         return {
@@ -121,32 +107,33 @@ class Offers(db.Model):
             "id_trip":self.id_trip
         }
 
-class Trip(db.Model):
+class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
-    is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_active = db.Column(db.Boolean(), default=True, unique=False, nullable=False)
     post_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     needs_trip = db.Column(db.String(60), unique=False, nullable=False)
     destination = db.Column(db.String(200), unique=False, nullable=False)
     first_day = db.Column(db.Date(), unique=False, nullable=False)
     last_day = db.Column(db.Date(), unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=False)
-    receiving_offers = db.Column(db.Boolean(), unique=False, nullable=False)
+    receiving_offers = db.Column(db.Boolean(), unique=False, default=True, nullable=False)
     offers = relationship("Offers")
     counter = db.Column(db.Integer,nullable=False)
 
-    def __init__(self,is_active,needs_trip,destination,first_day,last_day,description):
+    def __init__(self,id_traveler,needs_trip,destination,first_day,last_day,description):
+        self.id_traveler = id_traveler
         self.is_active = True
         self.needs_trip = needs_trip
         self.destination = destination
         self.first_day = first_day
         self.last_day = last_day
         self.description = description
-        self.is_active = is_active
         self.counter = 0
 
     def __repr__(self):
         return '<Trip %r>' % self.id
+
 
     def serialize (self):
         return {

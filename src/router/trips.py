@@ -10,7 +10,7 @@ def trips_route(app,token_required):
         list_trips = []
         for trip in total_viajes.items:
             trip_json = trip.serialize()
-            trip_json["needs_trip"]=trip_json["needs_trip"].split(' ')
+            trip_json["needs_trip"]=trip_json["needs_trip"].split(',')
             list_trips.append(trip_json)
 
         response_body = {

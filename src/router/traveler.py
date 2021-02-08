@@ -41,7 +41,7 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
     @app.route('/traveler', methods=['GET'])
     @token_required
     def get_traveler(user):
-        body= request.get_json()
+        #body = request.get_json()
         user_traveler = Traveler.query.filter_by(id=user["id"]).first()
         if user_traveler is not None:
             return jsonify(user_traveler.serialize()),200

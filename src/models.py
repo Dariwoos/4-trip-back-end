@@ -118,6 +118,7 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
     last_day = db.Column(db.Date(), unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=False)
     receiving_offers = db.Column(db.Boolean(), unique=False, default=True, nullable=False)
+    traveler = db.relationship('Traveler', backref='Trip', lazy=True) #así accedo a la tabla de traveler
     offers = relationship("Offers")
     counter = db.Column(db.Integer,nullable=False)
 
@@ -146,5 +147,6 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
             "last_day": self.last_day,
             "description": self.description,
             "counter":self.counter,
-            "receiving_offers":self.receiving_offers
+            "receiving_offers":self.receiving_offers,
+            "traveler": self.traveler
         }

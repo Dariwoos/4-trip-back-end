@@ -14,25 +14,19 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
     @app.route('/user/register/traveler', methods=['POST'])
     def new_traveler():
         try:
-            new_object = request.get_json()
-            print(new_object)
-            data = request.data
-            print(type(data.decode("utf-8")))
-            body = request.get_json()
-            print(body,"body")
+            body = dict(request.form)
+            
             if body["username"] == "":
                 return jsonify({"msg":"usuario no es valido"}),400
             if body["email"] == "":
                 return jsonify({"msg":"correo no es valido"}),400
             if body["password"] == "":
                 return jsonify({"msg":"contraseña no es valida"}),400
-            print("funciona")
+           
             encrypt_pass = encrypted_pass(body["password"]) 
-            print("antes del img")
-            img = body["avatar"]
-            f = base64.b64encode(img.read())
+            print("antes del img", request.files['avatar'])
+            f = request.files['avatar']
             filename= secure_filename(f.filename)
-            print(filename)
             f.save(os.path.join('./src/img',filename))
             img_url = host+filename
             print(img_url,"url")
@@ -42,8 +36,10 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
             db.session.commit()
             return jsonify(new_user.serialize()), 200
         except OSError as error:
+            print(error)
             return jsonify("Error"), 400
         except KeyError as error:
+            print(error)
             return jsonify("Error Key" + str(error)),400
         
     @app.route('/traveler', methods=['GET'])

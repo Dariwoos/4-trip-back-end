@@ -5,6 +5,7 @@ from models import db,Userpro
 from encrypted import encrypted_pass
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
+import base64
 
 host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
 
@@ -13,7 +14,7 @@ def professional_route(app,token_required):
     @app.route('/user/register/pro', methods=['POST'])
     def new_professional():
         try:
-            body = dict(request.form)
+            body = request.get_json()
             print(body)
             if(body["email"] == ""):
                 return jsonify({"msg":"correo no es valido"}),400
@@ -28,7 +29,8 @@ def professional_route(app,token_required):
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),400
             encrypt_pass = encrypted_pass(body["password"]) 
-            f = request.files["avatar"]
+            img = body["avatar"]
+            f =  base64.b64encode(img.read())
             filename= secure_filename(f.filename)
             f.save(os.path.join("./src/img",filename))
             img_url = host+filename

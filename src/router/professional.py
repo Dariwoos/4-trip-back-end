@@ -5,6 +5,7 @@ from models import db,Userpro
 from encrypted import encrypted_pass
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
+import base64
 
 host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
 
@@ -13,7 +14,7 @@ def professional_route(app,token_required):
     @app.route('/user/register/pro', methods=['POST'])
     def new_professional():
         try:
-            body = dict(request.form)
+            body = request.get_json()
             print(body)
             if(body["email"] == ""):
                 return jsonify({"msg":"correo no es valido"}),400
@@ -28,7 +29,8 @@ def professional_route(app,token_required):
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),400
             encrypt_pass = encrypted_pass(body["password"]) 
-            f = request.files["avatar"]
+            img = body["avatar"]
+            f =  base64.b64encode(img.read())
             filename= secure_filename(f.filename)
             f.save(os.path.join("./src/img",filename))
             img_url = host+filename
@@ -54,20 +56,22 @@ def professional_route(app,token_required):
             list_pro.append(user.serialize())
         return jsonify(list_pro),200
 
-    @app.route('/pro/<int:id>',methods=['GET'])
-    def get_pro(id):
+    @app.route('/pro',methods=['GET'])
+    @token_required
+    def get_pro(user):
         body = request.get_json()
-        user_pro = Userpro.query.filter_by(id=id).first()
+        user_pro = Userpro.query.filter_by(id=user["id"]).first()
         print(user_pro)
         if user_pro is not None:
             return jsonify(user_pro.serialize()),200 
         else:
             return jsonify("usuario no existe"),400
 
-    @app.route("/pro/<int:id>",methods=["PUT"])
-    def edit_account_pro(id):
+    @app.route("/pro",methods=["PUT"])
+    @token_required
+    def edit_account_pro(user):
         body = request.get_json() #aqui es el body que quiero cambiar   
-        user_pro = Userpro.query.filter_by(id=id).first() #es donde estan los dato antiguos
+        user_pro = Userpro.query.filter_by(id=user["user"]).first() #es donde estan los dato antiguos
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar
                 print('key',key)

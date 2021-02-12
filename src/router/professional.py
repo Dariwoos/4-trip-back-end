@@ -14,7 +14,7 @@ def professional_route(app,token_required):
     @app.route('/user/register/pro', methods=['POST'])
     def new_professional():
         try:
-            body = request.get_json()
+            body = dict(request.form)
             print(body)
             if(body["email"] == ""):
                 return jsonify({"msg":"correo no es valido"}),400
@@ -29,14 +29,15 @@ def professional_route(app,token_required):
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),400
             encrypt_pass = encrypted_pass(body["password"]) 
-            img = body["avatar"]
-            f =  base64.b64encode(img.read())
+
+            f = request.files['avatar']
             filename= secure_filename(f.filename)
             f.save(os.path.join("./src/img",filename))
             img_url = host+filename
             new_user = Userpro(user_name=body['user_name'],password=body["password"], email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
+            print(new_user.serialize(),"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             db.session.add(new_user) #sin este linea no se añade a la base de datos
-            db.session.commit() # esta es la hermana de la que esta arriba :) 
+            db.session.commit()
             print(new_user.serialize())
             response_body = {
                 "msg": new_user.serialize()

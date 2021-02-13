@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
+host = "vhttps://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
 
 def professional_route(app,token_required):
 
@@ -27,14 +27,16 @@ def professional_route(app,token_required):
             if(body["location"]== ""):
                 return jsonify({"msg":"localidad no es alida"}),400
             if(body["direction"] == ""):
-                return jsonify({"msg":"direccion no es valida"}),400
-            encrypt_pass = encrypted_pass(body["password"]) 
+                return jsonify({"msg":"direccion no es valida"}),
+                
+            print(request.file,"strien@@@gggggggggghggggggggGGGGGGGGGG")
 
             f = request.files['avatar']
             filename= secure_filename(f.filename)
             f.save(os.path.join("./src/img",filename))
             img_url = host+filename
             new_user = Userpro(user_name=body['user_name'],password=body["password"], email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
+            encrypt_pass = encrypted_pass(body["password"]) 
             print(new_user.serialize(),"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             db.session.add(new_user) #sin este linea no se añade a la base de datos
             db.session.commit()

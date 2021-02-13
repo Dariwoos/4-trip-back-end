@@ -30,5 +30,7 @@ def trips_route(app,token_required):
         db.session.add(new_trip)
         db.session.commit()
         print(new_trip.serialize())
+        new_travel_json = new_trip.serialize()
+        new_travel_json["traveler"]=new_travel_json["traveler"].serialize()
 
-        return jsonify(new_trip.serialize()), 200
+        return jsonify(new_travel_json), 200

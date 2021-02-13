@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
+host = "https://3000-orange-egret-6bph6z4j.ws-eu03.gitpod.io/"
 
 def traveler_route(app,token_required):#esta función recibe app y token_required que vienen de main
 

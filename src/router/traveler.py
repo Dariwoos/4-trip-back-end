@@ -22,13 +22,14 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
                 return jsonify({"msg":"correo no es valido"}),400
             if body["password"] == "":
                 return jsonify({"msg":"contraseña no es valida"}),400
-           
-            encrypt_pass = encrypted_pass(body["password"]) 
-            print("antes del img", request.files['avatar'])
-            f = request.files['avatar']
-            filename= secure_filename(f.filename)
-            f.save(os.path.join('./src/img',filename))
-            img_url = host+filename
+            if request.files:
+                f = request.files['avatar']
+                filename= secure_filename(f.filename)
+                f.save(os.path.join('./src/img',filename))
+                img_url = host+filename
+            else:
+                img_url = host+"default_avatar.png"
+            encrypt_pass = encrypted_pass(body["password"])      
             print(img_url,"url")
             new_user = Traveler(username=body["username"],email=body["email"],password=body["password"],avatar=img_url)
             print(new_user)

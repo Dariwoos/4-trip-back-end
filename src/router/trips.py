@@ -1,5 +1,5 @@
 from flask import request,jsonify
-from models import db, Trip
+from models import db, Trip, Traveler
 
 def trips_route(app,token_required):
 
@@ -10,6 +10,7 @@ def trips_route(app,token_required):
         list_trips = []
         for trip in total_viajes.items:
             trip_json = trip.serialize()
+            trip_json['traveler'] = trip_json['traveler'].serialize()
             trip_json["needs_trip"]=trip_json["needs_trip"].split(',')
             list_trips.append(trip_json)
 
@@ -29,5 +30,7 @@ def trips_route(app,token_required):
         db.session.add(new_trip)
         db.session.commit()
         print(new_trip.serialize())
+        new_travel_json = new_trip.serialize()
+        new_travel_json["traveler"]=new_travel_json["traveler"].serialize()
 
-        return jsonify(new_trip.serialize()), 200
+        return jsonify(new_travel_json), 200

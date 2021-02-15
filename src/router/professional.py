@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "vhttps://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
+host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
 
 def professional_route(app,token_required):
 
@@ -29,7 +29,7 @@ def professional_route(app,token_required):
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),
                 
-            print(request.file,"strien@@@gggggggggghggggggggGGGGGGGGGG")
+            print(request.files,"strien@@@gggggggggghggggggggGGGGGGGGGG")
 
             f = request.files['avatar']
             filename= secure_filename(f.filename)

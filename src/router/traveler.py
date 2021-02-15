@@ -15,7 +15,6 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
     def new_traveler():
         try:
             body = dict(request.form)
-            
             if body["username"] == "":
                 return jsonify({"msg":"usuario no es valido"}),400
             if body["email"] == "":

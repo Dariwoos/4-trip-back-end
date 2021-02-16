@@ -50,6 +50,7 @@ def token_required(f):
             if traveler is None:
                 return jsonify("no authorization"), 401
             
+            print("token_required", data)
             return f(data, *args, **kwargs)#meto toda la data para pasar en el token el id del usuario
 
         except OSError as error:

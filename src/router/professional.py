@@ -29,7 +29,6 @@ def professional_route(app,token_required):
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),
                 
-            print(request.files,"strien@@@gggggggggghggggggggGGGGGGGGGG")
 
             f = request.files['avatar']
             filename= secure_filename(f.filename)
@@ -62,7 +61,7 @@ def professional_route(app,token_required):
     @app.route('/pro',methods=['GET'])
     @token_required
     def get_pro(user):
-        body = request.get_json()
+        #body = request.get_json()
         user_pro = Userpro.query.filter_by(id=user["id"]).first()
         print(user_pro)
         if user_pro is not None:

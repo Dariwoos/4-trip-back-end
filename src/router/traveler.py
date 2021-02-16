@@ -55,8 +55,12 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
     @app.route('/traveler',methods=['PUT'])
     @token_required
     def edit_account_traveler(user):
-        print(user)
-        body = request.get_json()
+        body = dict(request.form)
+        if request.files:
+            f = request.files['avatar']
+            filename= secure_filename(f.filename)
+            f.save(os.path.join('./src/img',filename))
+            img_url = host+filename
         user_traveler= Traveler.query.filter_by(id=user["id"]).first()
         if user_traveler is not None:
             for key in body:

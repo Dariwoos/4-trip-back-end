@@ -40,16 +40,20 @@ def token_required(f):
     def decorador(*args, **kwargs):
         try:
             auth = request.headers.get('Authorization')
-            print(auth)
+            print(auth,"auth")
             if auth is None:
                 return jsonify('no token'),403
             token = auth.split(' ')
-            print(token)
+            print(token,"estoe en main")
             data = jwt_auth.decode_token(token[1], app.config['SECRET_KEY'])
-            traveler = Traveler.query.filter_by(email=data["email"]).first()#Una vez validado el token compruebo que el traveler realmente pertenece a mi bbd
-            if traveler is None:
-                return jsonify("no authorization"), 401
-            
+            print(data,"estoy en data ")
+            #Una vez validado el token compruebo que el traveler realmente pertenece a mi bbd 
+            if data["rol"] == "Traveler":
+                traveler = Traveler.query.filter_by(email=data["email"]).first()
+            elif data["rol"] == "Profesional":
+                pro = Userpro.query.filter_by(email=data["email"]).first()
+
+
             print("token_required", data)
             return f(data, *args, **kwargs)#meto toda la data para pasar en el token el id del usuario
 

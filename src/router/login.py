@@ -10,17 +10,18 @@ def login_route(app):#esta función recibe app y token_required que vienen de ma
         body = request.get_json()
         print(body, "este es el body")
         traveler = Traveler.query.filter_by(email=body['email']).first()
+        pro = Userpro.query.filter_by(email=body["email"]).first()
         print(traveler,"este es el traveler")
         if(traveler is not None):
             is_validate = compare_pass(body['password'], encrypted_pass(traveler.password).decode("utf-8"))
             
             if(is_validate == False):
-                return "password incorrecto", 401
-
+                return "password incorrecto", 401        
             token = generate_token(traveler.email,traveler.rol,traveler.id,app.config['SECRET_KEY'])#añado el rol para pasar por el token esta informacion y poder saber si tengo que ir a consultar si el usuario existe a la base de datos de traveler o de professional
             return jsonify({"access_token":token,"rol":traveler.rol}), 200
 
         pro = Userpro.query.filter_by(email=body['email']).first()
+        print(pro,"este es el pro")
         if(pro is not None):
             is_validate = compare_pass(body['password'], encrypted_pass(pro.password).decode("utf-8"))
 

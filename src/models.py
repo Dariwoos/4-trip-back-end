@@ -88,11 +88,7 @@ class Offers(db.Model):
     id_trip = db.Column(db.Integer, db.ForeignKey("trip.id"),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.String(200),nullable=False)
-
-    def __init__(self,text,id_pro,id_trip):
-        self.text: text
-        self.id_pro: id_pro
-        self.id_trip: id_trip
+    attached = db.Column(db.String(120), nullable=False)
         
     def __repr__(self):
         return '<Offers %r>' % self.id
@@ -104,7 +100,8 @@ class Offers(db.Model):
             "text":self.text,
             "date":self.date,
             "id_pro":self.id_pro,
-            "id_trip":self.id_trip
+            "id_trip":self.id_trip,
+            "attached":self.attached
         }
 
 class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto

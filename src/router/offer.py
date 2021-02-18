@@ -12,19 +12,17 @@ def offer_route(app,token_required):
     def new_offer(user):
         try:
             body = dict(request.form)
-            print(body,"body")
-            print(request.files, "request file")
             if(body["oferta"] is None):
                 return jsonify({"msg":"debes describir una oferta"}),400
-            f = request.files['attached']
-            filename= secure_filename(f.filename)
-            f.save(os.path.join("./src/img",filename))
-            img_url = host+filename
-            print(user, "user")
-            new_offer = Offers(text=body['oferta'],attached=img_url,id_trip=body["id_trip"],id_pro=user['id'])
+            if(len(request.files)!=0):
+                f = request.files['attached']
+                filename= secure_filename(f.filename)
+                f.save(os.path.join("./src/img",filename))
+                img_url = host+filename
+                new_offer = Offers(text=body['oferta'],attached=img_url,id_trip=body["id_trip"],id_pro=user['id'])
+            else: new_offer = Offers(text=body['oferta'],id_trip=body["id_trip"],id_pro=user['id'])
             db.session.add(new_offer)
             db.session.commit()
-            print(new_offer.serialize(),"new offer serialize")
             return jsonify(new_offer.serialize()),200
 
         except OSError as error:

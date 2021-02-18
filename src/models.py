@@ -88,7 +88,7 @@ class Offers(db.Model):
     id_trip = db.Column(db.Integer, db.ForeignKey("trip.id"),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.String(200),nullable=False)
-    attached = db.Column(db.String(120), nullable=False)
+    attached = db.Column(db.String(120), nullable=True)
         
     def __repr__(self):
         return '<Offers %r>' % self.id

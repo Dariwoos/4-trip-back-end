@@ -74,8 +74,14 @@ def professional_route(app,token_required):
     @app.route("/pro",methods=["PUT"])
     @token_required
     def edit_account_pro(user):
-        body = request.get_json() #aqui es el body que quiero cambiar   
-        user_pro = Userpro.query.filter_by(id=user["user"]).first() #es donde estan los dato antiguos
+        body =dict(request.form) #el body es dict por que viene una foto como hice con el registro como hay foto que se viene hay que ponerlo en dict(reques.form) 
+        if request.files:
+            f = reques.files['avatar']
+            filename= secure_filename(f.filename)
+            f.save(os.path.join('./src/img', filename))
+            img_url = host+filename 
+        user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
+        print(body)
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar
                 print('key',key)
@@ -84,3 +90,5 @@ def professional_route(app,token_required):
             return jsonify(user_pro.serialize()), 200
         else:
             return jsonify("usuario no existe"),400
+
+    

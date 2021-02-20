@@ -40,7 +40,6 @@ def trips_route(app,token_required):
         detail_trip = Trip.query.filter_by(id=id).first()
         trip_json=detail_trip.serialize()
         trip_json["needs_trip"]=trip_json["needs_trip"].split(',')#needs_trip que está dentro de trip_json lo convierto en array porque está como string
-        print(trip_json)
         if trip_json is not None:
             return jsonify(trip_json),200
         return "not found", 404

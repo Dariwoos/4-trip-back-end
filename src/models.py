@@ -23,6 +23,7 @@ class Userpro(db.Model):
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
     Ofertas = db.relationship("Offers")
+    comments = relationship('Comments')
       
      
     def serialize(self):
@@ -56,7 +57,7 @@ class Traveler(db.Model):
     is_active = db.Column(db.Boolean(), default=True ,unique=False, nullable=False)
     trip = relationship("Trip")
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
-  
+    comments = relationship('Comments')
 
     def __init__(self,username,email,password,avatar):
         self.username = username
@@ -156,11 +157,13 @@ class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'),nullable=True)
     id_pro = db.Column(db.Integer, db.ForeignKey('userpro.id'),nullable=True)
+    id_offer = db.Column(db.Integer, db.ForeignKey('offer.id'),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.Text,nullable=False)
+    attached = db.Column(db.String(120), nullable=True)
     traveler = db.relationship('Traveler', backref='Comments', lazy=True) #así accedo a la tabla de traveler
-    userpro = db.relationship('Userpro', backref='Comments', lazy=True) #así accedo a la tabla de userpro
-    offer = relationship("Offers")
+    userpro = db.relationship("Userpro", backref="Comments", lazy=True) #así accedo a  la tabla de userpro
+    offer = relationship('Offers') #así accedo a la tabla ofertas
 
     def __repr__(self):
         return '<Comments %r>' % self.id
@@ -171,7 +174,8 @@ class Comments(db.Model):
             "id": self.id,
             "id_traveler": self.id_traveler,
             "id_pro": self.id_pro,
+            "id_offer": self.id_offer,
             "date": self.date,
             "text": self.text,
-            "offers": list(map(lambda x: x.serialize(),self.offers))
+            "attached":self.attached
         }

@@ -21,6 +21,7 @@ flask-admin = "*"
 pyjwt = "*"
 jwt = "*"
 bcrypt = "*"
+sendgrid = "*"
 
 [requires]
 python_version = "3.8"

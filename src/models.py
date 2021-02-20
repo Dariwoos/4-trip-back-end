@@ -87,9 +87,10 @@ class Offers(db.Model):
     id_pro =db.Column(db.Integer, db.ForeignKey("userpro.id"), nullable=False)
     id_trip = db.Column(db.Integer, db.ForeignKey("trip.id"),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
-    text = db.Column(db.String(200),nullable=False)
+    text = db.Column(db.Text,nullable=False)
     attached = db.Column(db.String(120), nullable=True)
     trip = relationship("Trip")
+    comments = db.relationship("Comments", backref="Offers", lazy=True) #así accedo a comentarios y los puedo listar
         
     def __repr__(self):
         return '<Offers %r>' % self.id
@@ -102,7 +103,8 @@ class Offers(db.Model):
             "date":self.date,
             "id_pro":self.id_pro,
             "id_trip":self.id_trip,
-            "attached":self.attached
+            "attached":self.attached,
+            "comments": list(map(lambda x: x.serialize(),self.offers))
         }
 
 class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
@@ -150,7 +152,26 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
             "offers": list(map(lambda x: x.serialize(),self.offers))
         }
 
-class Coments(db.Model):
+class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
-    id_pro = db.Column(db.Integer, db.ForeignKey(''))
+    id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'),nullable=True)
+    id_pro = db.Column(db.Integer, db.ForeignKey('userpro.id'),nullable=True)
+    date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
+    text = db.Column(db.Text,nullable=False)
+    traveler = db.relationship('Traveler', backref='Comments', lazy=True) #así accedo a la tabla de traveler
+    userpro = db.relationship('Userpro', backref='Comments', lazy=True) #así accedo a la tabla de userpro
+    offer = relationship("Offers")
+
+    def __repr__(self):
+        return '<Comments %r>' % self.id
+
+
+    def serialize (self):
+        return {
+            "id": self.id,
+            "id_traveler": self.id_traveler,
+            "id_pro": self.id_pro,
+            "date": self.date,
+            "text": self.text,
+            "offers": list(map(lambda x: x.serialize(),self.offers))
+        }

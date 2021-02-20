@@ -22,7 +22,7 @@ class Userpro(db.Model):
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
-    Ofertas = db.relationship("Offers")
+    offers = db.relationship("Offers", backref="Userpro", lazy=True)
     comments = relationship('Comments')
       
      
@@ -40,7 +40,7 @@ class Userpro(db.Model):
             "avatar": self.avatar,
             "photos": self.photos,
             "registr_date": self.registr_date,
-            "rol": self.rol
+            "rol": self.rol,
             # do not serialize the password, its a security breach
         }
       
@@ -90,8 +90,8 @@ class Offers(db.Model):
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.Text,nullable=False)
     attached = db.Column(db.String(120), nullable=True)
-    trip = relationship("Trip")
     comments = db.relationship("Comments", backref="Offers", lazy=True) #así accedo a comentarios y los puedo listar
+
         
     def __repr__(self):
         return '<Offers %r>' % self.id
@@ -105,7 +105,7 @@ class Offers(db.Model):
             "id_pro":self.id_pro,
             "id_trip":self.id_trip,
             "attached":self.attached,
-            "comments": list(map(lambda x: x.serialize(),self.offers))
+            "comments": list(map(lambda x: x.serialize(),self.comments))
         }
 
 class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
@@ -157,13 +157,12 @@ class Comments(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'),nullable=True)
     id_pro = db.Column(db.Integer, db.ForeignKey('userpro.id'),nullable=True)
-    id_offer = db.Column(db.Integer, db.ForeignKey('offer.id'),nullable=False)
+    id_offer = db.Column(db.Integer, db.ForeignKey('offers.id'),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.Text,nullable=False)
     attached = db.Column(db.String(120), nullable=True)
     traveler = db.relationship('Traveler', backref='Comments', lazy=True) #así accedo a la tabla de traveler
     userpro = db.relationship("Userpro", backref="Comments", lazy=True) #así accedo a  la tabla de userpro
-    offer = relationship('Offers') #así accedo a la tabla ofertas
 
     def __repr__(self):
         return '<Comments %r>' % self.id

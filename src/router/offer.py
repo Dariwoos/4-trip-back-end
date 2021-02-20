@@ -30,3 +30,11 @@ def offer_route(app,token_required):
 
         except OSError as error:
             return jsonify("Error"), 400
+
+    @app.route('/oferta/<int:id>', methods=['GET'])
+    def get_offer(id):
+        detail_offer = Offers.query.filter_by(id=id).first()
+        trip_json=detail_offer.serialize()
+        if trip_json is not None:
+            return jsonify(trip_json),200
+        return "not found", 404

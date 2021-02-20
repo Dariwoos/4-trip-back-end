@@ -150,4 +150,7 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
             "offers": list(map(lambda x: x.serialize(),self.offers))
         }
 
-    
+class Coments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'))
+    id_pro = db.Column(db.Integer, db.ForeignKey(''))

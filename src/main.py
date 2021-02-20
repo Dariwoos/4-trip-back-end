@@ -19,6 +19,7 @@ from router.professional import professional_route
 from router.traveler import traveler_route
 from router.trips import trips_route
 from router.login import login_route
+from router.offer import offer_route
 import jwt_auth
 import jwt
 
@@ -40,20 +41,20 @@ def token_required(f):
     def decorador(*args, **kwargs):
         try:
             auth = request.headers.get('Authorization')
-            print(auth,"auth")
             if auth is None:
                 return jsonify('no token'),403
             token = auth.split(' ')
-            print(token,"estoe en main")
             data = jwt_auth.decode_token(token[1], app.config['SECRET_KEY'])
-            print(data,"estoy en data ")
-            #Una vez validado el token compruebo que el traveler realmente pertenece a mi bbd 
             if data["rol"] == "Traveler":
                 traveler = Traveler.query.filter_by(email=data["email"]).first()
+                if traveler is None:
+                    return jsonify("no authorization"), 401
             elif data["rol"] == "Profesional":
                 pro = Userpro.query.filter_by(email=data["email"]).first()
+                if pro is None:
+                    return jsonify("no authorization"), 401
 
-
+            
             print("token_required", data)
             return f(data, *args, **kwargs)#meto toda la data para pasar en el token el id del usuario
 
@@ -86,6 +87,8 @@ proffesional = professional_route(app,token_required)
 traveler = traveler_route(app,token_required)
 trips = trips_route(app,token_required)
 login = login_route(app)#no necesitamos token. El token solo lo necesitamos cuando las funciones requieren estar logueado
+offer = offer_route(app,token_required)
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

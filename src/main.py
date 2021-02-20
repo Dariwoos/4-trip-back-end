@@ -54,7 +54,7 @@ def token_required(f):
                 if pro is None:
                     return jsonify("no authorization"), 401
 
-            
+            print("DATAAAA",data)
             print("token_required", data)
             return f(data, *args, **kwargs)#meto toda la data para pasar en el token el id del usuario
 

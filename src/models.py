@@ -89,6 +89,7 @@ class Offers(db.Model):
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.String(200),nullable=False)
     attached = db.Column(db.String(120), nullable=True)
+    trip = relationship("Trip")
         
     def __repr__(self):
         return '<Offers %r>' % self.id
@@ -116,7 +117,7 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
     description = db.Column(db.Text, unique=False, nullable=False)
     receiving_offers = db.Column(db.Boolean(), unique=False, default=True, nullable=False)
     traveler = db.relationship('Traveler', backref='Trip', lazy=True) #así accedo a la tabla de traveler
-    offers = relationship("Offers")
+    offers = db.relationship("Offers", backref="Trip", lazy=True) #así accedo a ofertas y las puedo listar
     counter = db.Column(db.Integer,nullable=False)
 
     def __init__(self,id_traveler,needs_trip,destination,first_day,last_day,description):
@@ -145,5 +146,8 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
             "description": self.description,
             "counter":self.counter,
             "receiving_offers":self.receiving_offers,
-            "traveler": self.traveler
+            "traveler": self.traveler.serialize(),
+            "offers": list(map(lambda x: x.serialize(),self.offers))
         }
+
+    

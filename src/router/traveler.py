@@ -30,8 +30,8 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
             else:
                 img_url = host+"default_avatar.png"
             encrypt_pass = encrypted_pass(body["password"])      
-            print(img_url,"url")
-            new_user = Traveler(username=body["username"],email=body["email"],password=body["password"],avatar=img_url)
+
+            new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
             print(new_user)
             db.session.add(new_user)
             db.session.commit()

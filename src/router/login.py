@@ -10,8 +10,6 @@ def login_route(app):#esta función recibe app y token_required que vienen de ma
         body = request.get_json()
         traveler = Traveler.query.filter_by(email=body['email']).first()
 
-        if traveler is None:
-            return jsonify("user no exist"),404
         if(traveler is not None):
             is_validate = compare_pass(body['password'],traveler.password)
             
@@ -19,7 +17,12 @@ def login_route(app):#esta función recibe app y token_required que vienen de ma
                 return "password incorrecto", 401        
             token = generate_token(traveler.email,traveler.rol,traveler.id,app.config['SECRET_KEY'])#añado el rol para pasar por el token esta informacion y poder saber si tengo que ir a consultar si el usuario existe a la base de datos de traveler o de professional
             return jsonify({"access_token":token,"rol":traveler.rol}), 200
-        pro = Userpro.query.filter_by(email=body["email"]).first()   
+        pro = Userpro.query.filter_by(email=body["email"]).first()
+        print(pro)
+        print(pro.serialize())
+        print(body)
+        print(compare_pass(body['password'],pro.password))
+       
         if(pro is not None):
             is_validate = compare_pass(body['password'],pro.password )
 

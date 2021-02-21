@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-d6620844-473e-4005-a216-c78a8882d46d.ws-eu03.gitpod.io/"
+host = "https://3000-tan-vole-6vvk5e0t.ws-eu03.gitpod.io/"
 
 def professional_route(app,token_required):
 
@@ -28,15 +28,17 @@ def professional_route(app,token_required):
                 return jsonify({"msg":"localidad no es alida"}),400
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),
-                
-
-            f = request.files['avatar']
-            filename= secure_filename(f.filename)
-            f.save(os.path.join("./src/img",filename))
-            img_url = host+filename
-            new_user = Userpro(user_name=body['user_name'],password=body["password"], email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
+            if(len(request.files)!=0):
+                f = request.files['avatar']
+                filename= secure_filename(f.filename)
+                f.save(os.path.join("./src/img",filename))
+                img_url = host+filename
+            else:
+                img_url = host+"default_avatar.png"
             encrypt_pass = encrypted_pass(body["password"]) 
-            print(new_user.serialize(),"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            print(type(encrypt_pass),"@@@@@@@@@@‘“«‘“«‘“«‘“«‘“«1123@@@@@@")
+            new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
+            print(new_user.serialize(),"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             db.session.add(new_user) #sin este linea no se añade a la base de datos
             db.session.commit()
             print(new_user.serialize())
@@ -65,6 +67,7 @@ def professional_route(app,token_required):
         user_pro = Userpro.query.filter_by(id=user["id"]).first()
         print(user_pro)
         if user_pro is not None:
+   
             return jsonify(user_pro.serialize()),200 
         else:
             return jsonify("usuario no existe"),400
@@ -72,8 +75,14 @@ def professional_route(app,token_required):
     @app.route("/pro",methods=["PUT"])
     @token_required
     def edit_account_pro(user):
-        body = request.get_json() #aqui es el body que quiero cambiar   
-        user_pro = Userpro.query.filter_by(id=user["user"]).first() #es donde estan los dato antiguos
+        body =dict(request.form) #el body es dict por que viene una foto como hice con el registro como hay foto que se viene hay que ponerlo en dict(reques.form) 
+        if request.files:
+            f = reques.files['avatar']
+            filename= secure_filename(f.filename)
+            f.save(os.path.join('./src/img', filename))
+            img_url = host+filename 
+        user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
+        print(body)
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar
                 print('key',key)
@@ -82,3 +91,5 @@ def professional_route(app,token_required):
             return jsonify(user_pro.serialize()), 200
         else:
             return jsonify("usuario no existe"),400
+
+    

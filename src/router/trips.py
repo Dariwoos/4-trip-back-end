@@ -6,14 +6,14 @@ def trips_route(app,token_required):
     @app.route('/viajes/<int:page>', methods=['GET'])
     def get_trips(page):
         total_viajes = Trip.query.order_by(Trip.post_date.desc()).paginate(page,3,error_out=False)
-        print(total_viajes.items)
+        print(total_viajes)
         list_trips = []
         for trip in total_viajes.items:
+            print(trip, "TRIP")
             trip_json = trip.serialize()
-            trip_json['traveler'] = trip_json['traveler'].serialize()
             trip_json["needs_trip"]=trip_json["needs_trip"].split(',')
             list_trips.append(trip_json)
-
+        print(type(list_trips[0]["needs_trip"]), "@@@@@@@@@@@@@@@")
         response_body = {
             "data": list_trips
         }
@@ -34,3 +34,13 @@ def trips_route(app,token_required):
         new_travel_json["traveler"]=new_travel_json["traveler"].serialize()
 
         return jsonify(new_travel_json), 200
+
+    @app.route('/viaje/<int:id>', methods=['GET'])
+    def get_trip(id):
+        detail_trip = Trip.query.filter_by(id=id).first()
+        trip_json=detail_trip.serialize()
+        trip_json["needs_trip"]=trip_json["needs_trip"].split(',')#needs_trip que está dentro de trip_json lo convierto en array porque está como string
+        if trip_json is not None:
+            return jsonify(trip_json),200
+        return "not found", 404
+

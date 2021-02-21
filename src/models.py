@@ -10,7 +10,7 @@ class Userpro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(35), unique=True, nullable=False)
-    password = db.Column(db.String(200), unique=False, nullable=False)
+    password = db.Column(db.String(250), unique=False, nullable=False)
     phone= db.Column(db.String(20), unique = True , nullable=False)
     url = db.Column(db.String(120))
     location = db.Column(db.String(40) , nullable= False)
@@ -49,8 +49,8 @@ class Userpro(db.Model):
 class Traveler(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(40), unique=True, nullable=False)
+    password = db.Column(db.String(250), nullable=False)
     avatar = db.Column(db.String(180), nullable=True)
     rol = db.Column(db.String(10), nullable=False, default= "Traveler")
     is_active = db.Column(db.Boolean(), default=True ,unique=False, nullable=False)
@@ -89,6 +89,7 @@ class Offers(db.Model):
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.String(200),nullable=False)
     attached = db.Column(db.String(120), nullable=True)
+    trip = relationship("Trip")
         
     def __repr__(self):
         return '<Offers %r>' % self.id
@@ -116,7 +117,7 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
     description = db.Column(db.Text, unique=False, nullable=False)
     receiving_offers = db.Column(db.Boolean(), unique=False, default=True, nullable=False)
     traveler = db.relationship('Traveler', backref='Trip', lazy=True) #así accedo a la tabla de traveler
-    offers = relationship("Offers")
+    offers = db.relationship("Offers", backref="Trip", lazy=True) #así accedo a ofertas y las puedo listar
     counter = db.Column(db.Integer,nullable=False)
 
     def __init__(self,id_traveler,needs_trip,destination,first_day,last_day,description):
@@ -145,5 +146,8 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
             "description": self.description,
             "counter":self.counter,
             "receiving_offers":self.receiving_offers,
-            "traveler": self.traveler
+            "traveler": self.traveler.serialize(),
+            "offers": list(map(lambda x: x.serialize(),self.offers))
         }
+
+    

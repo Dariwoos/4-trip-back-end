@@ -29,7 +29,6 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
             else:
                 img_url = host+"default_avatar.png"
             encrypt_pass = encrypted_pass(body["password"])      
-            print(img_url,"url")
             new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
             print(new_user)
             db.session.add(new_user)
@@ -45,8 +44,9 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
     @app.route('/traveler', methods=['GET'])
     @token_required
     def get_traveler(user):
-        #body = request.get_json()
+        print(user)
         user_traveler = Traveler.query.filter_by(id=user["id"]).first()
+        print(user_traveler)
         if user_traveler is not None:
             return jsonify(user_traveler.serialize()),200
         else:

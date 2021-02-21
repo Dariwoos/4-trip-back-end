@@ -10,10 +10,11 @@ def login_route(app):#esta función recibe app y token_required que vienen de ma
         body = request.get_json()
         print(body, "este es el body")
         traveler = Traveler.query.filter_by(email=body['email']).first()
-        print(traveler,"este es el traveler")
+
+        if traveler is None:
+            return jsonify("user not existe"), 404
         if(traveler is not None):
             is_validate = compare_pass(body['password'], encrypted_pass(traveler.password).decode("utf-8"))
-            
             if(is_validate == False):
                 return "password incorrecto", 401
 

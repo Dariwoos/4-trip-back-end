@@ -9,7 +9,9 @@ def login_route(app):#esta función recibe app y token_required que vienen de ma
     def login_traveler():
         body = request.get_json()
         traveler = Traveler.query.filter_by(email=body['email']).first()
-    
+
+        if traveler is None:
+            return jsonify("user no exist"),404
         if(traveler is not None):
             is_validate = compare_pass(body['password'],traveler.password)
             

@@ -22,7 +22,7 @@ class Userpro(db.Model):
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
-    offers = db.relationship("Offers", backref="Userpro", lazy=True)
+    offers = db.relationship("Offers")
     comments = relationship('Comments')
       
      
@@ -42,6 +42,13 @@ class Userpro(db.Model):
             "registr_date": self.registr_date,
             "rol": self.rol,
             # do not serialize the password, its a security breach
+        }
+
+    def json_to_offer(self):
+        return{
+            "avatar": self.avatar,
+            "user_name": self.user_name,
+            "id": self.id
         }
       
       
@@ -83,6 +90,13 @@ class Traveler(db.Model):
             "create_date":self.fecha_registro,
         }
 
+    def json_to_offer(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "avatar": self.avatar
+        }
+
 class Offers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_pro =db.Column(db.Integer, db.ForeignKey("userpro.id"), nullable=False)
@@ -91,6 +105,7 @@ class Offers(db.Model):
     text = db.Column(db.Text,nullable=False)
     attached = db.Column(db.String(120), nullable=True)
     comments = db.relationship("Comments", backref="Offers", lazy=True) #así accedo a comentarios y los puedo listar
+    userpro = db.relationship("Userpro", backref="Offers", lazy=True)
 
         
     def __repr__(self):
@@ -105,7 +120,8 @@ class Offers(db.Model):
             "id_pro":self.id_pro,
             "id_trip":self.id_trip,
             "attached":self.attached,
-            "comments": list(map(lambda x: x.serialize(),self.comments))
+            "comments": list(map(lambda x: x.serialize(),self.comments)),
+            "userpro": self.userpro.json_to_offer()
         }
 
 class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
@@ -176,5 +192,7 @@ class Comments(db.Model):
             "id_offer": self.id_offer,
             "date": self.date,
             "text": self.text,
-            "attached":self.attached
+            "attached":self.attached,
+            "traveler": self.traveler.json_to_offer() if self.traveler is not None else None,#esto es un ternario. Si la condicion, que es lo que esta a la derecha del if, es veradera se ejecuta lo que está a la izquierda del if, si es falsa lo que esta despues de else 
+            "userpro": self.userpro.json_to_offer() if self.userpro is not None else None
         }

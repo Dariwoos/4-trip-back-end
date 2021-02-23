@@ -16,7 +16,7 @@ def offer_route(app,token_required):
             print(body, "BODY@@@@@@@@@@@@@@@@@@@@@@")
             if(body["oferta"] is None):
                 return jsonify({"msg":"debes describir una oferta"}),400
-            if(len(request.files)!=0):
+            if(len(request.files)>0):
                 f = request.files['attached']
                 filename= secure_filename(f.filename)
                 f.save(os.path.join("./src/img",filename))

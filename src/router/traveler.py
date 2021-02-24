@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-jade-wolf-d94h5a3i.ws-eu03.gitpod.io/"
+host = "https://3000-maroon-sailfish-dcx9l543.ws-eu03.gitpod.io/"
 
 def traveler_route(app,token_required):#esta función recibe app y token_required que vienen de main
 
@@ -16,18 +16,18 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
         try:
             body = dict(request.form)
             if body["username"] == "":
-                return jsonify({"msg":"usuario no es valido"}),400
+                return jsonify({"msg":"usuario no es valido"}),404
             if body["email"] == "":
-                return jsonify({"msg":"correo no es valido"}),400
+                return jsonify({"msg":"correo no es valido"}),404
             if body["password"] == "":
-                return jsonify({"msg":"contraseña no es valida"}),400
+                return jsonify({"msg":"contraseña no es valida"}),404
             if request.files:
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)
                 f.save(os.path.join('./src/img',filename))
                 img_url = host+filename
             else:
-                img_url = host+"default_avatar.png"
+                img_url = host+"icon_viajero.png"
             encrypt_pass = encrypted_pass(body["password"])      
             new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
             print(new_user)

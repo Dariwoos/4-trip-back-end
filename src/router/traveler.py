@@ -24,18 +24,12 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
             if request.files:
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)
-                print('routa de imagen ------------------------------')
-                print(os.getcwd())
-                print(os.path.basename('./src/img' + filename) )
-                print(os.path.join('./src/img',filename))
-                
                 f.save(os.path.join('./img',filename))
                 img_url = host+filename
             else:
                 img_url = host+"icon_viajero.png"
             encrypt_pass = encrypted_pass(body["password"])      
             new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
-            print(new_user)
             db.session.add(new_user)
             db.session.commit()
             return jsonify(new_user.serialize()), 200
@@ -49,9 +43,8 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
     @app.route('/traveler', methods=['GET'])
     @token_required
     def get_traveler(user):
-        print(user)
+
         user_traveler = Traveler.query.filter_by(id=user["id"]).first()
-        print(user_traveler)
         if user_traveler is not None:
             return jsonify(user_traveler.serialize()),200
         else:
@@ -64,12 +57,11 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
         if request.files:
             f = request.files['avatar']
             filename= secure_filename(f.filename)
-            f.save(os.path.join('./src/img',filename))
+            f.save(os.path.join('./img',filename))
             img_url = host+filename
         user_traveler= Traveler.query.filter_by(id=user["id"]).first()
         if user_traveler is not None:
             for key in body:
-                print(key,"key")
                 setattr(user_traveler,key,body[key])
             db.session.commit()
             return jsonify(user_traveler.serialize()),200

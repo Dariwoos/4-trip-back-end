@@ -13,13 +13,12 @@ def offer_route(app,token_required):
     def new_offer(user):
         try:
             body = dict(request.form)
-            print(body, "BODY@@@@@@@@@@@@@@@@@@@@@@")
             if(body["oferta"] is None):
                 return jsonify({"msg":"debes describir una oferta"}),400
             if(len(request.files)>0):
                 f = request.files['attached']
                 filename= secure_filename(f.filename)
-                f.save(os.path.join("./src/img",filename))
+                f.save(os.path.join("./img",filename))
                 img_url = host+filename
                 offer = Offers(text=body['oferta'],attached=img_url,id_trip=body["id_trip"],id_pro=user['id'])
             else: 

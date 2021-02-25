@@ -31,17 +31,14 @@ def professional_route(app,token_required):
             if(len(request.files)!=0): #explicacion de esta linea
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)
-                f.save(os.path.join("./src/img",filename))
+                f.save(os.path.join("./img",filename))
                 img_url = host+filename
             else:
                 img_url = host+"icon_pro.png"
             encrypt_pass = encrypted_pass(body["password"]) 
-            print(type(encrypt_pass),"@@@@@@@@@@‘“«‘“«‘“«‘“«‘“«1123@@@@@@")
             new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
-            print(new_user.serialize(),"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             db.session.add(new_user) #sin este linea no se añade a la base de datos
             db.session.commit()
-            print(new_user.serialize())
             response_body = {
                 "msg": new_user.serialize()
             }
@@ -79,7 +76,7 @@ def professional_route(app,token_required):
         if request.files:
             f = reques.files['avatar']
             filename= secure_filename(f.filename)
-            f.save(os.path.join('./src/img', filename))
+            f.save(os.path.join('./img', filename))
             img_url = host+filename 
         user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
         print(body)

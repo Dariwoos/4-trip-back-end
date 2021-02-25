@@ -26,10 +26,10 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
                 filename= secure_filename(f.filename)
                 print('routa de imagen ------------------------------')
                 print(os.getcwd())
-                print(os.path.basename('./src/img',filename) )
+                print(os.path.basename('./src/img' + filename) )
                 print(os.path.join('./src/img',filename))
                 
-                f.save(os.path.join('./src/img',filename))
+                f.save(os.path.join('./img',filename))
                 img_url = host+filename
             else:
                 img_url = host+"icon_viajero.png"

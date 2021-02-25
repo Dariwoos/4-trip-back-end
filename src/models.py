@@ -22,7 +22,8 @@ class Userpro(db.Model):
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
-    Ofertas = db.relationship("Offers")
+    offers = db.relationship("Offers")
+    comments = relationship('Comments')
       
      
     def serialize(self):
@@ -39,8 +40,15 @@ class Userpro(db.Model):
             "avatar": self.avatar,
             "photos": self.photos,
             "registr_date": self.registr_date,
-            "rol": self.rol
+            "rol": self.rol,
             # do not serialize the password, its a security breach
+        }
+
+    def json_to_offer(self):
+        return{
+            "avatar": self.avatar,
+            "user_name": self.user_name,
+            "id": self.id
         }
       
       
@@ -56,7 +64,7 @@ class Traveler(db.Model):
     is_active = db.Column(db.Boolean(), default=True ,unique=False, nullable=False)
     trip = relationship("Trip")
     fecha_registro = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
-  
+    comments = relationship('Comments')
 
     def __init__(self,username,email,password,avatar):
         self.username = username
@@ -82,14 +90,23 @@ class Traveler(db.Model):
             "create_date":self.fecha_registro,
         }
 
+    def json_to_offer(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "avatar": self.avatar
+        }
+
 class Offers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_pro =db.Column(db.Integer, db.ForeignKey("userpro.id"), nullable=False)
     id_trip = db.Column(db.Integer, db.ForeignKey("trip.id"),nullable=False)
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
-    text = db.Column(db.String(200),nullable=False)
+    text = db.Column(db.Text,nullable=False)
     attached = db.Column(db.String(120), nullable=True)
-    trip = relationship("Trip")
+    comments = db.relationship("Comments", backref="Offers", lazy=True) #así accedo a comentarios y los puedo listar
+    userpro = db.relationship("Userpro", backref="Offers", lazy=True)
+
         
     def __repr__(self):
         return '<Offers %r>' % self.id
@@ -102,7 +119,9 @@ class Offers(db.Model):
             "date":self.date,
             "id_pro":self.id_pro,
             "id_trip":self.id_trip,
-            "attached":self.attached
+            "attached":self.attached,
+            "comments": list(map(lambda x: x.serialize(),self.comments)),
+            "userpro": self.userpro.json_to_offer()
         }
 
 class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers porque no se lo estoy pasando a través de main ya que son campos que van con un valor por defecto
@@ -150,4 +169,30 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
             "offers": list(map(lambda x: x.serialize(),self.offers))
         }
 
-    
+class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'),nullable=True)
+    id_pro = db.Column(db.Integer, db.ForeignKey('userpro.id'),nullable=True)
+    id_offer = db.Column(db.Integer, db.ForeignKey('offers.id'),nullable=False)
+    date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
+    text = db.Column(db.Text,nullable=False)
+    attached = db.Column(db.String(120), nullable=True)
+    traveler = db.relationship('Traveler', backref='Comments', lazy=True) #así accedo a la tabla de traveler
+    userpro = db.relationship("Userpro", backref="Comments", lazy=True) #así accedo a  la tabla de userpro
+
+    def __repr__(self):
+        return '<Comments %r>' % self.id
+
+
+    def serialize (self):
+        return {
+            "id": self.id,
+            "id_traveler": self.id_traveler,
+            "id_pro": self.id_pro,
+            "id_offer": self.id_offer,
+            "date": self.date,
+            "text": self.text,
+            "attached":self.attached,
+            "traveler": self.traveler.json_to_offer() if self.traveler is not None else None,#esto es un ternario. Si la condicion, que es lo que esta a la derecha del if, es veradera se ejecuta lo que está a la izquierda del if, si es falsa lo que esta despues de else 
+            "userpro": self.userpro.json_to_offer() if self.userpro is not None else None
+        }

@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 from send_email import sendEmail
 
-host = "https://3000-orange-egret-6bph6z4j.ws-eu03.gitpod.io/"
+host = "https://fortrips.herokuapp.com/"
 
 def offer_route(app,token_required):
     @app.route('/publishoffer', methods=['POST'])

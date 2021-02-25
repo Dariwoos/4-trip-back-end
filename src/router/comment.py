@@ -3,7 +3,7 @@ from models import db, Comments
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 
-host = "https://3000-orange-egret-6bph6z4j.ws-eu03.gitpod.io/"
+host = "https://fortrips.herokuapp.com/"
 
 def comment_route(app,token_required):
 

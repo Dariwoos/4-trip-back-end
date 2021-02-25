@@ -6,6 +6,11 @@ def trips_route(app,token_required):
     @app.route('/viajes/<int:page>', methods=['GET'])
     def get_trips(page):
         total_viajes = Trip.query.order_by(Trip.post_date.desc()).paginate(page,3,error_out=False)
+        if len(total_viajes.items) == 0:
+            respose = {
+                "data":[]
+            }
+            return jsonify(respose), 200
         print(total_viajes)
         list_trips = []
         for trip in total_viajes.items:
@@ -24,15 +29,12 @@ def trips_route(app,token_required):
     @app.route('/viaje', methods=['POST'])
     @token_required
     def post_trip(user):
-        print("este es el user",user)
         body = request.get_json()
         new_trip = Trip(id_traveler=user['id'], needs_trip=body['needs_trip'], destination=body['destination'], first_day=body['first_day'], last_day=body['last_day'], description=body['description'])
         db.session.add(new_trip)
         db.session.commit()
         print(new_trip.serialize())
         new_travel_json = new_trip.serialize()
-        new_travel_json["traveler"]=new_travel_json["traveler"].serialize()
-
         return jsonify(new_travel_json), 200
 
     @app.route('/viaje/<int:id>', methods=['GET'])

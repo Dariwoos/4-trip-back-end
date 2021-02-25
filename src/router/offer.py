@@ -21,12 +21,13 @@ def offer_route(app,token_required):
                 filename= secure_filename(f.filename)
                 f.save(os.path.join("./src/img",filename))
                 img_url = host+filename
-                new_offer = Offers(text=body['oferta'],attached=img_url,id_trip=body["id_trip"],id_pro=user['id'])
-            else: new_offer = Offers(text=body['oferta'],id_trip=body["id_trip"],id_pro=user['id'])
-            db.session.add(new_offer)
+                offer = Offers(text=body['oferta'],attached=img_url,id_trip=body["id_trip"],id_pro=user['id'])
+            else: 
+                offer = Offers(text=body['oferta'],id_trip=body["id_trip"],id_pro=user['id'])
+            db.session.add(offer)
             db.session.commit()
             sendEmail(body["email"])
-            return jsonify(new_offer.serialize()),200
+            return jsonify(offer.serialize()),200
 
         except OSError as error:
             return jsonify("Error"), 400

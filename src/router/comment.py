@@ -1,5 +1,5 @@
 from flask import request,jsonify
-from models import db, Offers
+from models import db, Offers, Comments
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 
@@ -20,7 +20,8 @@ def offer_route(app,token_required):
                 f.save(os.path.join("./src/img",filename))
                 img_url = host+filename
                 new_comment = Comments(text=body['comment'],attached=img_url,id_traveler=body["id_traveler"],id_pro=user['id'],id_offer=["id_offer"])
-            else: new_offer = Comments(text=body['comment'],id_traveler=body["id_traveler"],id_pro=user['id'],id_offer=["id_offer"])
+            else:
+                new_offer = Comments(text=body['comment'],id_traveler=body["id_traveler"],id_pro=user['id'],id_offer=["id_offer"])
             db.session.add(new_comment)
             db.session.commit()
             return jsonify(new_comment.serialize()),200

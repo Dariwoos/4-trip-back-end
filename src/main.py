@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Traveler, Trip, Userpro, Offers
+from models import db, Traveler, Trip, Userpro, Offers, Comments
 
 #from models import Person
 
@@ -20,6 +20,7 @@ from router.traveler import traveler_route
 from router.trips import trips_route
 from router.login import login_route
 from router.offer import offer_route
+from router.comment import comment_route
 import jwt_auth
 import jwt
 
@@ -54,7 +55,7 @@ def token_required(f):
                 if pro is None:
                     return jsonify("no authorization"), 401
 
-            
+            print("DATAAAA",data)
             print("token_required", data)
             return f(data, *args, **kwargs)#meto toda la data para pasar en el token el id del usuario
 
@@ -88,6 +89,7 @@ traveler = traveler_route(app,token_required)
 trips = trips_route(app,token_required)
 login = login_route(app)#no necesitamos token. El token solo lo necesitamos cuando las funciones requieren estar logueado
 offer = offer_route(app,token_required)
+comment = comment_route(app, token_required)
 
 
 # this only runs if `$ python src/main.py` is executed

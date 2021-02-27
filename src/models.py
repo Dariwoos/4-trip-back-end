@@ -104,7 +104,7 @@ class Offers(db.Model):
     date = db.Column(db.DateTime,nullable=False,default=datetime.datetime.utcnow)
     text = db.Column(db.Text,nullable=False)
     attached = db.Column(db.String(120), nullable=True)
-    comments = db.relationship("Comments", backref="Offers", lazy=True) #así accedo a comentarios y los puedo listar
+    comments = db.relationship("Comments", backref="Offers",cascade="all,delete", lazy=True) #así accedo a comentarios y los puedo listar
     userpro = db.relationship("Userpro", backref="Offers", lazy=True)
 
         
@@ -136,7 +136,7 @@ class Trip(db.Model): #aqui no meto is_active, post_date ni receiving_offers por
     description = db.Column(db.Text, unique=False, nullable=False)
     receiving_offers = db.Column(db.Boolean(), unique=False, default=True, nullable=False)
     traveler = db.relationship('Traveler', backref='Trip', lazy=True) #así accedo a la tabla de traveler
-    offers = db.relationship("Offers", backref="Trip", lazy=True) #así accedo a ofertas y las puedo listar
+    offers = db.relationship("Offers", backref="Trip",cascade="all,delete", lazy=True) #así accedo a ofertas y las puedo listar
     counter = db.Column(db.Integer,nullable=False)
 
     def __init__(self,id_traveler,needs_trip,destination,first_day,last_day,description):

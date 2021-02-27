@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-tan-vole-6vvk5e0t.ws-eu03.gitpod.io/"
+host = "https://fortrips.herokuapp.com/"
 
 def professional_route(app,token_required):
 
@@ -17,24 +17,24 @@ def professional_route(app,token_required):
             body = dict(request.form)
             print(body)
             if(body["email"] == ""):
-                return jsonify({"msg":"correo no es valido"}),400
+                return jsonify({"msg":"correo no es valido"}),404
             if(body["user_name"] == ""):
-                return jsonify({"msg":"usuario no es valido"}),400
+                return jsonify({"msg":"usuario no es valido"}),404
             if(body["password"] == ""):
-                return jsonify({"msg": "escribe una contraseña"}),400
+                return jsonify({"msg": "escribe una contraseña"}),404
             if(body["phone"] == ""):
-                return jsonify({"msg":"numero no es valido"}),400
+                return jsonify({"msg":"numero no es valido"}),404
             if(body["location"]== ""):
-                return jsonify({"msg":"localidad no es alida"}),400
+                return jsonify({"msg":"localidad no es alida"}),404
             if(body["direction"] == ""):
-                return jsonify({"msg":"direccion no es valida"}),
-            if(len(request.files)!=0):
+                return jsonify({"msg":"direccion no es valida"}),404
+            if(len(request.files)!=0): #explicacion de esta linea
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)
                 f.save(os.path.join("./src/img",filename))
                 img_url = host+filename
             else:
-                img_url = host+"default_avatar.png"
+                img_url = "../img/default_avatar_pro.png"
             encrypt_pass = encrypted_pass(body["password"]) 
             print(type(encrypt_pass),"@@@@@@@@@@‘“«‘“«‘“«‘“«‘“«1123@@@@@@")
             new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)

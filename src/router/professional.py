@@ -15,7 +15,6 @@ def professional_route(app,token_required):
     def new_professional():
         try:
             body = dict(request.form)
-            print(body)
             if(body["email"] == ""):
                 return jsonify({"msg":"correo no es valido"}),404
             if(body["user_name"] == ""):
@@ -34,14 +33,11 @@ def professional_route(app,token_required):
                 f.save(os.path.join("./src/img",filename))
                 img_url = host+filename
             else:
-                img_url = host+"icon_pro.png"
+                img_url = "../img/default_avatar_pro.png"
             encrypt_pass = encrypted_pass(body["password"]) 
-            print(type(encrypt_pass),"@@@@@@@@@@‘“«‘“«‘“«‘“«‘“«1123@@@@@@")
             new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
-            print(new_user.serialize(),"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             db.session.add(new_user) #sin este linea no se añade a la base de datos
             db.session.commit()
-            print(new_user.serialize())
             response_body = {
                 "msg": new_user.serialize()
             }
@@ -65,7 +61,6 @@ def professional_route(app,token_required):
     def get_pro(user):
         #body = request.get_json()
         user_pro = Userpro.query.filter_by(id=user["id"]).first()
-        print(user_pro)
         if user_pro is not None:
    
             return jsonify(user_pro.serialize()),200 
@@ -82,10 +77,8 @@ def professional_route(app,token_required):
             f.save(os.path.join('./src/img', filename))
             img_url = host+filename 
         user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
-        print(body)
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar
-                print('key',key)
                 setattr(user_pro,key,body[key]) #setattr le estoy diciendo que entre a user_pro
             db.session.commit()
             return jsonify(user_pro.serialize()), 200

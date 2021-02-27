@@ -28,6 +28,7 @@ def professional_route(app,token_required):
                 return jsonify({"msg":"localidad no es alida"}),400
             if(body["direction"] == ""):
                 return jsonify({"msg":"direccion no es valida"}),
+            print("algo qiue no tengo en otro lado",request.files)
             if(len(request.files)!=0):
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)

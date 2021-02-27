@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-tan-vole-6vvk5e0t.ws-eu03.gitpod.io/"
+host = "https://fortrips.herokuapp.com/"
 
 def professional_route(app,token_required):
 
@@ -30,7 +30,7 @@ def professional_route(app,token_required):
             if(len(request.files)!=0): #explicacion de esta linea
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)
-                f.save(os.path.join("./src/img",filename))
+                f.save(os.path.join("./img",filename))
                 img_url = host+filename
             else:
                 img_url = "../img/default_avatar_pro.png"
@@ -74,7 +74,7 @@ def professional_route(app,token_required):
         if request.files:
             f = reques.files['avatar']
             filename= secure_filename(f.filename)
-            f.save(os.path.join('./src/img', filename))
+            f.save(os.path.join('./img', filename))
             img_url = host+filename 
         user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
         if user_pro is not None: 

@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
 
-host = "https://3000-maroon-sailfish-dcx9l543.ws-eu03.gitpod.io/"
+host = "https://fortrips.herokuapp.com/"
 
 def traveler_route(app,token_required):#esta función recibe app y token_required que vienen de main
 
@@ -24,7 +24,7 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
             if request.files:
                 f = request.files['avatar']
                 filename= secure_filename(f.filename)
-                f.save(os.path.join('./src/img',filename))
+                f.save(os.path.join('./img',filename))
                 img_url = host+filename
             else:
                 img_url = "../img/default_avatar.png"
@@ -56,7 +56,7 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
         if request.files:
             f = request.files['avatar']
             filename= secure_filename(f.filename)
-            f.save(os.path.join('./src/img',filename))
+            f.save(os.path.join('./img',filename))
             img_url = host+filename
         user_traveler= Traveler.query.filter_by(id=user["id"]).first()
         if user_traveler is not None:

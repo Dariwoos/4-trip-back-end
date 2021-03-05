@@ -22,7 +22,10 @@ class Userpro(db.Model):
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
-    offers = db.relationship("Offers")
+    percent_reviews = db.Column(db.Float(), nullable=False, default=5)
+    total_reviews = db.Column(db.Integer, nullable=True, default=1)
+    sum_reviews = db.Column(db.Integer, nullable=False, default=5)
+    offers = db.relationship("Offers", nullable=True)
     comments = relationship('Comments')
       
      
@@ -196,3 +199,19 @@ class Comments(db.Model):
             "traveler": self.traveler.json_to_offer() if self.traveler is not None else None,#esto es un ternario. Si la condicion, que es lo que esta a la derecha del if, es veradera se ejecuta lo que está a la izquierda del if, si es falsa lo que esta despues de else 
             "userpro": self.userpro.json_to_offer() if self.userpro is not None else None
         }
+
+    #VALORACIONES
+    #10 reseñas 2,4,5,5,4,3,2,2,1,5
+    #33puntos sobre reseñas *5
+    #5:50=x:33
+    #(33*5)/50
+
+    class Reviews(db.Model):
+        id = db.Column(db.Integer, primary_key=True)
+        id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'),nullable=False)
+        id_pro = db.Column(db.Integer, db.ForeignKey('userpro.id'),nullable=False)
+        id_users = db.Column(db.String(20), unique=True)
+        value = db.Column(db.Integer, nullable=False)
+        traveler = db.relationship('Traveler', backref='Reviews', lazy=True)
+        userpro = db.relationship("Userpro", backref="Reviews", lazy=True)
+    

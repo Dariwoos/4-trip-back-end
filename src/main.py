@@ -90,6 +90,7 @@ trips = trips_route(app,token_required)
 login = login_route(app)#no necesitamos token. El token solo lo necesitamos cuando las funciones requieren estar logueado
 offer = offer_route(app,token_required)
 comment = comment_route(app, token_required)
+reviews_route = reviews_route(app, token_required)
 
 
 # this only runs if `$ python src/main.py` is executed

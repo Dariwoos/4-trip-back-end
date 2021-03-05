@@ -27,7 +27,7 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
                 f.save(os.path.join('./src/img',filename))
                 img_url = host+filename
             else:
-                img_url = "../img/default_avatar.png"
+                img_url = "https://3000-orange-egret-6bph6z4j.ws-eu03.gitpod.io/workspace/4-trip-back-end/src/img/default_avatar.png"
             encrypt_pass = encrypted_pass(body["password"])      
             new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
             print(new_user)

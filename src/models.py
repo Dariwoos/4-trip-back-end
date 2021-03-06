@@ -22,10 +22,10 @@ class Userpro(db.Model):
     registr_date = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     rol = db.Column(db.String(30),default="Profesional")
     is_active = db.Column(db.Boolean(), unique=False, nullable=False,default=True)
-    percent_reviews = db.Column(db.Float(), nullable=False, default=5)
-    total_reviews = db.Column(db.Integer, nullable=True, default=1)
-    sum_reviews = db.Column(db.Integer, nullable=False, default=5)
-    offers = db.relationship("Offers", nullable=True)
+    #percent_reviews = db.Column(db.Float(), nullable=False, default=5)
+    #total_reviews = db.Column(db.Float(), nullable=True, default=0) este seria la unica columna que necesito
+    #sum_reviews = db.Column(db.Integer, nullable=False, default=5)
+    offers = db.relationship("Offers")
     comments = relationship('Comments')
       
      
@@ -210,8 +210,7 @@ class Comments(db.Model):
         id = db.Column(db.Integer, primary_key=True)
         id_traveler = db.Column(db.Integer, db.ForeignKey('traveler.id'),nullable=False)
         id_pro = db.Column(db.Integer, db.ForeignKey('userpro.id'),nullable=False)
-        id_users = db.Column(db.String(20), unique=True)
         value = db.Column(db.Integer, nullable=False)
-        traveler = db.relationship('Traveler', backref='Reviews', lazy=True)
-        userpro = db.relationship("Userpro", backref="Reviews", lazy=True)
+        traveler = db.relationship('Traveler')
+        userpro = db.relationship("Userpro")
     

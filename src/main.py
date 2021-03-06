@@ -21,6 +21,8 @@ from router.trips import trips_route
 from router.login import login_route
 from router.offer import offer_route
 from router.comment import comment_route
+from router.reviews import reviews_route
+from router.search import search_route
 import jwt_auth
 import jwt
 
@@ -90,7 +92,8 @@ trips = trips_route(app,token_required)
 login = login_route(app)#no necesitamos token. El token solo lo necesitamos cuando las funciones requieren estar logueado
 offer = offer_route(app,token_required)
 comment = comment_route(app, token_required)
-reviews_route = reviews_route(app, token_required)
+reviews = reviews_route(app, token_required)
+search = search_route(app)
 
 
 # this only runs if `$ python src/main.py` is executed

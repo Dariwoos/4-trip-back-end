@@ -46,3 +46,18 @@ def trips_route(app,token_required):
             return jsonify(trip_json),200
         return "not found", 404
 
+    
+    @app.route('/usertrips', methods=['GET'])
+    @token_required
+    def get_user_trips(user):
+        user_trips = Trip.query.filter_by(id_traveler=user["id"])
+        trip_list = []
+        for trip in user_trips:
+            trip_user = trip.serialize()
+            trip_user["needs_trip"] = trip_user["needs_trip"].split(',')
+            trip_list.append(trip_user)
+               
+        if len(trip_list)>0:
+            return jsonify(trip_list),200
+        return "not found", 404
+

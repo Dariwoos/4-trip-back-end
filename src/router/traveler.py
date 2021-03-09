@@ -6,6 +6,7 @@ from encrypted import encrypted_pass
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
+from cloudinary_funct import save_image
 
 host = "https://fortrips.herokuapp.com/"
 
@@ -23,11 +24,9 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
                 return jsonify({"msg":"contraseña no es valida"}),404
             if request.files:
                 f = request.files['avatar']
-                filename= secure_filename(f.filename)
-                f.save(os.path.join('./img',filename))
-                img_url = host+filename
+                img_url=save_image(f)
             else:
-                img_url = "../img/default_avatar.png"
+                img_url = "https://res.cloudinary.com/dyfwsdqx8/image/upload/v1615318577/default_avatar_okufrf.png"
             encrypt_pass = encrypted_pass(body["password"])      
             new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
             db.session.add(new_user)

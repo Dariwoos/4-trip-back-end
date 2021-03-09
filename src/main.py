@@ -25,6 +25,8 @@ from router.reviews import reviews_route
 from router.search import search_route
 import jwt_auth
 import jwt
+import cloudinary
+from cloudinary.utils import cloudinary_url
 
 from functools import wraps #importacion para generar el decorador
 
@@ -37,6 +39,15 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+print(os.environ.get("CLOUDINARY_NAME"))
+print(os.environ.get("CLOUDINARY_KEY"))
+print(os.environ.get("CLOUDINARY_SECRET"))
+cloudinary.config( 
+  cloud_name = os.environ.get("CLOUDINARY_NAME"), 
+  api_key = os.environ.get("CLOUDINARY_KEY"), 
+  api_secret = os.environ.get("CLOUDINARY_SECRET")
+)
 
 #decorador
 def token_required(f):

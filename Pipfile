@@ -22,6 +22,7 @@ pyjwt = "*"
 jwt = "*"
 bcrypt = "*"
 sendgrid = "*"
+cloudinary = "*"
 
 [requires]
 python_version = "3.8"

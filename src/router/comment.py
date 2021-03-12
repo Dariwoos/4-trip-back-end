@@ -2,6 +2,7 @@ from flask import request,jsonify
 from models import db, Comments
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
+from cloudinary_funct import save_image
 
 host = "https://fortrips.herokuapp.com/"
 
@@ -18,9 +19,9 @@ def comment_route(app,token_required):
             # img
             if(len(request.files)>0):
                 f = request.files['attached']
-                filename= secure_filename(f.filename)
-                f.save(os.path.join("./img",filename))
-                img_url = host+filename
+                #filename= secure_filename(f.filename)Al usar cloudinary no lo necesito
+                #f.save(os.path.join("./img",filename))Al usar cloudinary no lo necesito
+                img_url = save_image(f)
                 if user['rol'] != 'Profesional':
                     new_comment = Comments(text=body['comment'],attached=img_url,id_traveler=user['id'], id_pro=None,id_offer=body["id_offer"])
                 else:

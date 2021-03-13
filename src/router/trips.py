@@ -66,13 +66,17 @@ def trips_route(app,token_required):
     def edit_trips(user):
         body = request.get_json()
         print (body,"bodyyyyyyyy")
-        trip = Trip.query.filter_by(id=body["id"]).first().serialize()
-        print (trip, "triiiiip")
-        if trip is not None:
+        trip = Trip.query.filter_by(id=body["id"]).first()
+        trip_list = []
+        if trip is not None:     
             for key in body:
-                trip[key]=body[key]
+                if key == "needs_trip":
+                    converting_to_string = ','.join(body["needs_trip"])
+                    setattr(trip,"needs_trip",converting_to_string)
+                else:
+                    setattr(trip,key,body[key])
             db.session.commit()
-            return jsonify(trip), 200
+            return jsonify(trip.serialize()), 200
         return jsonify("ningún viaje a editar"), 400
 
 

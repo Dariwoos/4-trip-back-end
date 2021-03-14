@@ -1,11 +1,15 @@
+from flask import request,jsonify
+from models import db, Reviews, Userpro
+
 def reviews_route(app,token_required):
 
     @app.route('/reviews', methods=['POST'])
     @token_required
     def new_review(user):
         body = request.get_json()
+        print(body,user)
         id_users = str(user["id"])+"@"+str(body["id"])
-        new_review = Review(id_traveler=user["id"], id_pro=body["id"],id_users=id_users, value=body["value"])
+        new_review = Reviews(id_traveler=user["id"], id_pro=body["id"],id_users=id_users, value=body["value"])
         userpro = Userpro.query.filter_by(id=body["id"]).first()
         
         old_total = userpro.total_reviews
@@ -22,3 +26,5 @@ def reviews_route(app,token_required):
         db.session.add(new_review)
         db.session.add(userpro)
         db.session.commit()
+
+        return jsonify("review added"), 200

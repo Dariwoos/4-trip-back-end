@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 657297c953fe
+Revision ID: 9468ca678f45
 Revises: 
-Create Date: 2021-02-27 12:12:47.047676
+Create Date: 2021-03-14 11:44:18.843552
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '657297c953fe'
+revision = '9468ca678f45'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,10 +47,22 @@ def upgrade():
     sa.Column('registr_date', sa.DateTime(), nullable=False),
     sa.Column('rol', sa.String(length=30), nullable=True),
     sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('percent_reviews', sa.Float(), nullable=False),
+    sa.Column('total_reviews', sa.Float(), nullable=True),
+    sa.Column('sum_reviews', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('phone'),
     sa.UniqueConstraint('user_name')
+    )
+    op.create_table('reviews',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id_traveler', sa.Integer(), nullable=False),
+    sa.Column('id_pro', sa.Integer(), nullable=False),
+    sa.Column('value', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['id_pro'], ['userpro.id'], ),
+    sa.ForeignKeyConstraint(['id_traveler'], ['traveler.id'], ),
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_table('trip',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -99,6 +111,7 @@ def downgrade():
     op.drop_table('comments')
     op.drop_table('offers')
     op.drop_table('trip')
+    op.drop_table('reviews')
     op.drop_table('userpro')
     op.drop_table('traveler')
     # ### end Alembic commands ###

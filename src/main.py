@@ -21,8 +21,12 @@ from router.trips import trips_route
 from router.login import login_route
 from router.offer import offer_route
 from router.comment import comment_route
+from router.reviews import reviews_route
+from router.search import search_route
 import jwt_auth
 import jwt
+import cloudinary
+from cloudinary.utils import cloudinary_url
 
 from functools import wraps #importacion para generar el decorador
 
@@ -35,6 +39,15 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+
+print(os.environ.get("CLOUDINARY_NAME"))
+print(os.environ.get("CLOUDINARY_KEY"))
+print(os.environ.get("CLOUDINARY_SECRET"))
+cloudinary.config( 
+  cloud_name = os.environ.get("CLOUDINARY_NAME"), 
+  api_key = os.environ.get("CLOUDINARY_KEY"), 
+  api_secret = os.environ.get("CLOUDINARY_SECRET")
+)
 
 #decorador
 def token_required(f):
@@ -80,7 +93,7 @@ def sitemap():
 
 @app.route("/<filename>",methods=["GET"])
 def photo_rout_pro(filename):
-    return send_file("./img/"+filename)
+    return send_file("img/"+filename)
 
 
 #llamo a las funciones creadas en la carpeta route y las paso los parámetros app y token_required
@@ -90,6 +103,8 @@ trips = trips_route(app,token_required)
 login = login_route(app)#no necesitamos token. El token solo lo necesitamos cuando las funciones requieren estar logueado
 offer = offer_route(app,token_required)
 comment = comment_route(app, token_required)
+reviews = reviews_route(app, token_required)
+search = search_route(app)
 
 
 # this only runs if `$ python src/main.py` is executed

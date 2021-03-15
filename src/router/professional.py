@@ -6,6 +6,7 @@ from encrypted import encrypted_pass
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import ImmutableMultiDict
 import base64
+from cloudinary_funct import save_image
 
 host = "https://fortrips.herokuapp.com/"
 
@@ -29,11 +30,9 @@ def professional_route(app,token_required):
                 return jsonify({"msg":"direccion no es valida"}),404
             if(len(request.files)!=0): #explicacion de esta linea
                 f = request.files['avatar']
-                filename= secure_filename(f.filename)
-                f.save(os.path.join("./img",filename))
-                img_url = host+filename
+                img_url=save_image(f)
             else:
-                img_url = "../img/default_avatar_pro.png"
+                img_url = "https://res.cloudinary.com/dyfwsdqx8/image/upload/v1615318577/default_avatar_pro_sreecc.png"
             encrypt_pass = encrypted_pass(body["password"]) 
             new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
             db.session.add(new_user) #sin este linea no se añade a la base de datos
@@ -73,9 +72,7 @@ def professional_route(app,token_required):
         body =dict(request.form) #el body es dict por que viene una foto como hice con el registro como hay foto que se viene hay que ponerlo en dict(reques.form) 
         if request.files:
             f = reques.files['avatar']
-            filename= secure_filename(f.filename)
-            f.save(os.path.join('./img', filename))
-            img_url = host+filename 
+            img_url = save_image(f)
         user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar

@@ -46,3 +46,37 @@ def trips_route(app,token_required):
             return jsonify(trip_json),200
         return "not found", 404
 
+    
+    @app.route('/usertrips', methods=['GET'])
+    @token_required
+    def get_user_trips(user):
+        user_trips = Trip.query.filter_by(id_traveler=user["id"])
+        trip_list = []
+        for trip in user_trips:
+            trip_user = trip.serialize()
+            trip_user["needs_trip"] = trip_user["needs_trip"].split(',')
+            trip_list.append(trip_user)
+               
+        if len(trip_list)>0:
+            return jsonify(trip_list),200
+        return "not found", 404
+
+    @app.route('/edittrips',methods=['PUT'])
+    @token_required
+    def edit_trips(user):
+        body = request.get_json()
+        print (body,"bodyyyyyyyy")
+        trip = Trip.query.filter_by(id=body["id"]).first()
+        trip_list = []
+        if trip is not None:     
+            for key in body:
+                if key == "needs_trip":
+                    converting_to_string = ','.join(body["needs_trip"])
+                    setattr(trip,"needs_trip",converting_to_string)
+                else:
+                    setattr(trip,key,body[key])
+            db.session.commit()
+            return jsonify(trip.serialize()), 200
+        return jsonify("ningún viaje a editar"), 400
+
+

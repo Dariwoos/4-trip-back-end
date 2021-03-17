@@ -60,6 +60,7 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
         if request.files:
             f = request.files['avatar']
             img_url = save_image(f)
+            body["avatar"] = img_url
         user_traveler= Traveler.query.filter_by(id=user["id"]).first()
         if user_traveler is not None:
             for key in body:

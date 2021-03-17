@@ -27,7 +27,7 @@ def login_route(app):#esta función recibe app y token_required que vienen de ma
                 return "password incorrecto", 401
 
             token = generate_token(pro.email,pro.rol,pro.id,app.config['SECRET_KEY'])#añado el rol para pasar por el token esta informacion y poder saber si tengo que ir a consultar si el usuario existe a la base de datos de traveler o de professional
-            return jsonify({"access_token":token,"rol":pro.rol,"id":prop.id}), 200
+            return jsonify({"access_token":token,"rol":pro.rol,"id":pro.id}), 200
 
         return jsonify ("user not exists"), 404
         

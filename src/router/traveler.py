@@ -27,11 +27,16 @@ def traveler_route(app,token_required):#esta función recibe app y token_require
                 img_url=save_image(f)
             else:
                 img_url = "https://res.cloudinary.com/dyfwsdqx8/image/upload/v1615318577/default_avatar_okufrf.png"
-            encrypt_pass = encrypted_pass(body["password"])      
-            new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
-            db.session.add(new_user)
-            db.session.commit()
-            return jsonify(new_user.serialize()), 200
+            email_check= db.session.query(Traveler).filter(Traveler.email==body['email']).first()
+            user_check= db.session.query(Traveler).filter(Traveler.username==body['username']).first()
+            if email_check is None and user_check is None:
+                encrypt_pass = encrypted_pass(body["password"])      
+                new_user = Traveler(username=body["username"],email=body["email"],password=encrypt_pass,avatar=img_url)
+                db.session.add(new_user)
+                db.session.commit()
+                return jsonify(new_user.serialize()), 200
+            else: 
+                return jsonify("Correo o nombre de usuario existe"),409
         except OSError as error:
             print(error)
             return jsonify("Error"), 400

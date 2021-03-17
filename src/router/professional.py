@@ -33,14 +33,19 @@ def professional_route(app,token_required):
                 img_url=save_image(f)
             else:
                 img_url = "https://res.cloudinary.com/dyfwsdqx8/image/upload/v1615318577/default_avatar_pro_sreecc.png"
-            encrypt_pass = encrypted_pass(body["password"]) 
-            new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
-            db.session.add(new_user) #sin este linea no se añade a la base de datos
-            db.session.commit()
-            response_body = {
-                "msg": new_user.serialize()
-            }
-            return jsonify(response_body),201
+            email_check= db.session.query(Userpro).filter(Userpro.email==body['email']).first()
+            user_check= db.session.query(Userpro).filter(Userpro.user_name==body['user_name']).first()
+            if email_check is None and user_check is None:
+                encrypt_pass = encrypted_pass(body["password"]) 
+                new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
+                db.session.add(new_user) #sin este linea no se añade a la base de datos
+                db.session.commit()
+                response_body = {
+                    "msg": new_user.serialize()
+                }
+                return jsonify(response_body),201
+            else:
+                return jsonify("Correo o nombre de usuario ya existen"),409
         except OSError as error:
             return jsonify("Error"), 400
         except KeyError as error:

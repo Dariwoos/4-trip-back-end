@@ -33,14 +33,19 @@ def professional_route(app,token_required):
                 img_url=save_image(f)
             else:
                 img_url = "https://res.cloudinary.com/dyfwsdqx8/image/upload/v1615318577/default_avatar_pro_sreecc.png"
-            encrypt_pass = encrypted_pass(body["password"]) 
-            new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
-            db.session.add(new_user) #sin este linea no se añade a la base de datos
-            db.session.commit()
-            response_body = {
-                "msg": new_user.serialize()
-            }
-            return jsonify(response_body),201
+            email_check= db.session.query(Userpro).filter(Userpro.email==body['email']).first()
+            user_check= db.session.query(Userpro).filter(Userpro.user_name==body['user_name']).first()
+            if email_check is None and user_check is None:
+                encrypt_pass = encrypted_pass(body["password"]) 
+                new_user = Userpro(user_name=body['user_name'],password=encrypt_pass, email=body['email'],phone=body['phone'],url=body['url'],location=body['location'],direction=body['direction'],vat_number=body['vat_number'],social_reason=body['social_reason'],avatar=img_url)
+                db.session.add(new_user) #sin este linea no se añade a la base de datos
+                db.session.commit()
+                response_body = {
+                    "msg": new_user.serialize()
+                }
+                return jsonify(response_body),201
+            else:
+                return jsonify("Correo o nombre de usuario ya existen"),409
         except OSError as error:
             return jsonify("Error"), 400
         except KeyError as error:
@@ -61,7 +66,6 @@ def professional_route(app,token_required):
         #body = request.get_json()
         user_pro = Userpro.query.filter_by(id=user["id"]).first()
         if user_pro is not None:
-   
             return jsonify(user_pro.serialize()),200 
         else:
             return jsonify("usuario no existe"),400
@@ -71,15 +75,18 @@ def professional_route(app,token_required):
     def edit_account_pro(user):
         body =dict(request.form) #el body es dict por que viene una foto como hice con el registro como hay foto que se viene hay que ponerlo en dict(reques.form) 
         if request.files:
-            f = reques.files['avatar']
+            f = request.files['avatar']
             img_url = save_image(f)
+            body["avatar"] = img_url
         user_pro = Userpro.query.filter_by(id=user["id"]).first() #es donde estan los dato antiguos
         if user_pro is not None: 
             for key in body: #el key es la propiedad que voy a cambiar
                 setattr(user_pro,key,body[key]) #setattr le estoy diciendo que entre a user_pro
             db.session.commit()
+        
             return jsonify(user_pro.serialize()), 200
         else:
             return jsonify("usuario no existe"),400
+
 
     
